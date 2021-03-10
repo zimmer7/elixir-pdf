@@ -567,7 +567,7 @@ defmodule Pdf do
     do: set_info(%Document{} = document, :title, title)
 
   @doc """
-  Set multiple keys in the PDF information setion.
+  Set multiple keys in the PDF information section.
 
   Valid keys
     - `:author`
@@ -584,6 +584,17 @@ defmodule Pdf do
   # @spec set_info(pid, info_list) :: pid
   def set_info(%Document{} = document, info_list) do
     Document.put_info(%Document{} = document, info_list)
+  end
+
+  @doc """
+  Manipulate every page, e.g. add pagemarks like `page 1/10`.
+
+  Pass a function that will be passed a page and the index (zero based).
+  """
+  @spec each_page(Document.t(), ({Page.t(), pos_integer()} -> Page.t())) :: Document.t()
+  def each_page(%Document{pages: pages} = document, fun) when is_function(fun, 1) do
+    updated_pages = Enum.with_index(pages) |> Enum.map(fun)
+    %Document{document | pages: updated_pages}
   end
 
   defp set_info(%Document{} = document, key, value) do

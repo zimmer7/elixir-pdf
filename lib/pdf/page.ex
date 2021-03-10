@@ -20,7 +20,8 @@ defmodule Pdf.Page do
   import Pdf.Utils
   alias Pdf.{Image, Fonts, Stream, Text, Font}
 
-  def new(opts \\ [size: :a4]), do: init(opts, %__MODULE__{stream: Stream.new()})
+  def new(opts \\ [size: :a4]),
+    do: init(opts, %__MODULE__{stream: Stream.new()})
 
   defp init([], page), do: page
   defp init([{:fonts, fonts} | tail], page), do: init(tail, %{page | fonts: fonts})

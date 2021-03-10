@@ -202,6 +202,8 @@ defmodule Pdf.Document do
     document
   end
 
+  def add_page(document, opts \\ [])
+
   def add_page(
         %__MODULE__{pages: pages, fonts: fonts, opts: doc_opts} = document,
         opts
@@ -226,11 +228,7 @@ defmodule Pdf.Document do
   end
 
   def set_cursor(%__MODULE__{current: p, pages: pages} = document, y) do
-    updated_pages =
-      List.update_at(pages, p, fn page ->
-        Page.set_cursor(page, y)
-      end)
-
+    updated_pages = List.update_at(pages, p, fn page -> Page.set_cursor(page, y) end)
     %__MODULE__{document | pages: updated_pages}
   end
 
