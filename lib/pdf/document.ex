@@ -1,5 +1,16 @@
 defmodule Pdf.Document do
   @moduledoc false
+  @type t :: %__MODULE__{
+          objects: any(),
+          info: any(),
+          fonts: any(),
+          current: pos_integer(),
+          current_font: any(),
+          current_font_size: pos_integer(),
+          pages: [Pdf.Page.t()],
+          opts: Keyword.t(),
+          images: map()
+        }
   defstruct objects: nil,
             info: nil,
             fonts: nil,
@@ -100,9 +111,16 @@ defmodule Pdf.Document do
     {:move_down, quote(do: [amount])}
   ]
   |> Enum.map(fn {func_name, args} ->
-    def unquote(func_name)(%__MODULE__{current: page} = document, unquote_splicing(args)) do
-      page = Page.unquote(func_name)(page, unquote_splicing(args))
-      %{document | current: page}
+    def unquote(func_name)(
+          %__MODULE__{current: p, pages: pages} = document,
+          unquote_splicing(args)
+        ) do
+      updated_pages =
+        List.update_at(pages, p, fn page ->
+          Page.unquote(func_name)(page, unquote_splicing(args))
+        end)
+
+      %__MODULE__{document | pages: updated_pages}
     end
   end)
 
@@ -112,18 +130,23 @@ defmodule Pdf.Document do
 
   def text_wrap(document, xy, wh, text), do: text_wrap(document, xy, wh, text, [])
 
-  def text_wrap(%__MODULE__{current: page} = document, xy, wh, text, opts) do
-    {page, remaining} = Page.text_wrap(page, xy, wh, text, opts)
-    {%{document | current: page}, remaining}
+  def text_wrap(%__MODULE__{current: p, pages: pages} = document, xy, wh, text, opts) do
+    page = Enum.at(pages, p)
+    {updated_page, remaining} = Page.text_wrap(page, xy, wh, text, opts)
+    updated_pages = List.update_at(pages, p, fn _ -> updated_page end)
+
+    {%{document | pages: updated_pages}, remaining}
   end
 
   def table!(document, xy, wh, data), do: table!(document, xy, wh, data, [])
 
   def table(document, xy, wh, data), do: table(document, xy, wh, data, [])
 
-  def table(%__MODULE__{current: page} = document, xy, wh, data, opts) do
-    {page, remaining} = Page.table(page, xy, wh, data, opts)
-    {%{document | current: page}, remaining}
+  def table(%__MODULE__{current: p, pages: pages} = document, xy, wh, data, opts) do
+    page = Enum.at(pages, p)
+    {updated_page, remaining} = Page.table(page, xy, wh, data, opts)
+    updated_pages = List.update_at(pages, p, fn _ -> updated_page end)
+    {%{document | pages: updated_pages}, remaining}
   end
 
   def text_lines(document, xy, lines), do: text_lines(document, xy, lines, [])
@@ -139,7 +162,13 @@ defmodule Pdf.Document do
     add_or_create_image(document, {x, y}, image_path, image_path, opts)
   end
 
-  defp add_or_create_image(%__MODULE__{current: page} = document, {x, y}, image_key, image, opts) do
+  defp add_or_create_image(
+         %__MODULE__{current: p, pages: pages} = document,
+         {x, y},
+         image_key,
+         image,
+         opts
+       ) do
     image =
       case Map.get(document.images, image_key) do
         nil ->
@@ -149,9 +178,14 @@ defmodule Pdf.Document do
           image
       end
 
+    updated_pages =
+      List.update_at(pages, p, fn page ->
+        Page.add_image(page, {x, y}, image, opts)
+      end)
+
     %{
       document
-      | current: Page.add_image(page, {x, y}, image, opts),
+      | pages: updated_pages,
         images: Map.put_new(document.images, image_key, image)
     }
   end
@@ -168,31 +202,39 @@ defmodule Pdf.Document do
     document
   end
 
-  def add_page(%__MODULE__{current: nil, fonts: fonts, opts: doc_opts} = document, opts) do
+  def add_page(
+        %__MODULE__{pages: pages, fonts: fonts, opts: doc_opts} = document,
+        opts
+      ) do
     new_page = Page.new(Keyword.merge(Keyword.merge(doc_opts, opts), fonts: fonts))
-    %{document | current: new_page}
+    updated_pages = pages ++ [new_page]
+    %__MODULE__{document | current: length(updated_pages) - 1, pages: updated_pages}
   end
 
-  def add_page(%__MODULE__{current: current_page, pages: pages} = document, opts) do
-    add_page(%{document | current: nil, pages: [current_page | pages]}, opts)
+  def page_number(%__MODULE__{pages: pages}), do: length(pages)
+
+  def size(%__MODULE__{current: p, pages: pages}) do
+    pages
+    |> Enum.at(p)
+    |> Page.size()
   end
 
-  def page_number(%__MODULE__{pages: pages}), do: length(pages) + 1
-
-  def size(%__MODULE__{current: current_page}) do
-    Page.size(current_page)
+  def cursor(%__MODULE__{current: p, pages: pages}) do
+    pages
+    |> Enum.at(p)
+    |> Page.cursor()
   end
 
-  def cursor(%__MODULE__{current: current_page}) do
-    Page.cursor(current_page)
-  end
+  def set_cursor(%__MODULE__{current: p, pages: pages} = document, y) do
+    updated_pages =
+      List.update_at(pages, p, fn page ->
+        Page.set_cursor(page, y)
+      end)
 
-  def set_cursor(%__MODULE__{current: current_page} = document, y) do
-    %{document | current: Page.set_cursor(current_page, y)}
+    %__MODULE__{document | pages: updated_pages}
   end
 
   def to_iolist(document) do
-    pages = Enum.reverse([document.current | document.pages])
     proc_set = [n("PDF"), n("Text")]
 
     proc_set =
@@ -216,13 +258,13 @@ defmodule Pdf.Document do
     page_collection =
       Dictionary.new(%{
         "Type" => n("Pages"),
-        "Count" => length(pages),
+        "Count" => length(document.pages),
         "MediaBox" => Array.new(Paper.size(default_page_size(document))),
         "Resources" => resources
       })
 
     master_page = ObjectCollection.create_object(document.objects, page_collection)
-    page_objects = pages_to_objects(document, pages, master_page)
+    page_objects = pages_to_objects(document, document.pages, master_page)
     ObjectCollection.call(document.objects, master_page, :put, ["Kids", Array.new(page_objects)])
 
     catalogue =

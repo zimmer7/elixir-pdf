@@ -504,7 +504,7 @@ defmodule Pdf do
   Returns a `{width, height}` for the current page.
   """
   def size(%Document{} = document) do
-    Document.size(%Document{} = document)
+    Document.size(document)
   end
 
   @doc """

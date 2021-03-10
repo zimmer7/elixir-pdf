@@ -99,7 +99,7 @@ defmodule Pdf.TableTest do
     # Tiny paper so we run out of space quickly
     page = Page.new(size: [100, 100], fonts: fonts, compress: false)
 
-    assert {page,
+    assert {_page,
             {:continue,
              [
                [
@@ -165,7 +165,7 @@ defmodule Pdf.TableTest do
                allow_row_overflow: true
              )
 
-    assert {page, :complete} =
+    assert {_page, :complete} =
              page |> Page.table({10, 90}, {80, 80}, continued_data, allow_row_overflow: true)
   end
 

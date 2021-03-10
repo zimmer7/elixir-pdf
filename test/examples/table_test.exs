@@ -60,18 +60,14 @@ defmodule Pdf.Examples.TableTest do
       |> Pdf.set_line_cap(:square)
       |> Pdf.set_line_join(:miter)
 
-    {up_pdf, remaining} =
-      pdf
-      |> Pdf.table({100, 800}, {400, 80}, data, table_opts)
+    {up_pdf, remaining} = Pdf.table(pdf, {100, 800}, {400, 80}, data, table_opts)
 
     cursor = Pdf.cursor(up_pdf)
 
     {com_pdf, :complete} =
-      up_pdf
-      |> Pdf.table({100, cursor - 20}, {400, 200}, remaining, table_opts)
+      Pdf.table(up_pdf, {100, cursor - 20}, {400, 200}, remaining, table_opts)
 
-    com_pdf
-    |> Pdf.write_to(file_path)
+    Pdf.write_to(com_pdf, file_path)
 
     if @open, do: System.cmd("open", ["-g", file_path])
   end

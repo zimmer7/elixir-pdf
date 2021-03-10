@@ -38,6 +38,7 @@ defmodule Pdf.Examples.GeneralDocumentTest do
 
   defp write_paragraphs1(pdf) do
     %{width: width} = Pdf.size(pdf)
+
     cursor = Pdf.cursor(pdf)
 
     text = """
@@ -51,7 +52,7 @@ defmodule Pdf.Examples.GeneralDocumentTest do
     image_height = 75
     image_margin = 10
 
-    {pdf, {:continue, _} = remaining} =
+    {updated_pdf, {:continue, _} = remaining} =
       pdf
       |> Pdf.set_font("Helvetica", 12)
       |> Pdf.add_image({padding, cursor - image_height}, fixture("rgb.jpg"))
@@ -61,14 +62,14 @@ defmodule Pdf.Examples.GeneralDocumentTest do
         String.trim(text)
       )
 
-    cursor = Pdf.cursor(pdf)
+    cursor = Pdf.cursor(updated_pdf)
 
-    {pdf, :complete} =
-      pdf
+    {final_pdf, :complete} =
+      updated_pdf
       |> Pdf.set_font("Helvetica", 12)
       |> Pdf.text_wrap({padding, cursor}, {width - padding * 2, cursor - padding}, remaining)
 
-    Pdf.move_down(pdf, 12)
+    Pdf.move_down(final_pdf, 12)
   end
 
   defp write_paragraphs2(pdf) do
