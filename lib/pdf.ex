@@ -1,6 +1,4 @@
 defmodule Pdf do
-  use GenServer
-  import Pdf.Util.GenServerMacros
   alias Pdf.Document
 
   @moduledoc """
@@ -109,54 +107,7 @@ defmodule Pdf do
 
   """
   @spec new(any) :: :ignore | {:error, any} | {:ok, pid}
-  def new(opts \\ []), do: GenServer.start_link(__MODULE__, opts)
-
-  @doc """
-  Builds a PDF document taking care of cleaning up resources on completion.
-
-  ```elixir
-  Pdf.build([size: :a3], fn pdf ->
-    pdf
-    |> Pdf.set_font("Helvetica", 12)
-    |> Pdf.text_at({100, 100}, "Open")
-    |> Pdf.write_to("test.pdf")
-  end)
-  ```
-  is equivalent to
-  ```elixir
-  {:ok, pdf} = Pdf.new(size: :a3)
-  pdf
-  |> Pdf.set_font("Helvetica", 12)
-  |> Pdf.text_at({100, 100}, "Open")
-  |> Pdf.write_to("test.pdf")
-  |> Pdf.cleanup()
-  ```
-  """
-  def build(opts \\ [], func) do
-    {:ok, pdf} = new(opts)
-    result = func.(pdf)
-    cleanup(pdf)
-    result
-  end
-
-  @deprecated "Use build/2 instead"
-  def open(opts \\ [], func) do
-    build(opts, func)
-  end
-
-  @doc """
-  Stop the Pdf process releasing all document memory.
-  """
-  def cleanup(pid), do: GenServer.stop(pid)
-
-  @deprecated "Use cleanup/1 instead"
-  def delete(pid), do: cleanup(pid)
-
-  @doc false
-  def init(opts) do
-    Process.flag(:trap_exit, true)
-    {:ok, Document.new(opts)}
-  end
+  def new(opts \\ []), do: Document.new(opts)
 
   @doc """
   The unit of measurement in a Pdf are points, where *1 point = 1/72 inch*.
@@ -174,9 +125,9 @@ defmodule Pdf do
   def pixels_to_points(pixels, dpi \\ 300), do: round(pixels / dpi * 72)
 
   @doc "Write the PDF to the given path"
-  defcall write_to(path, _from, document) do
-    File.write!(path, Document.to_iolist(document))
-    {:reply, self(), document}
+  def write_to(%Document{} = document, path) do
+    File.write!(path, Document.to_iolist(%Document{} = document))
+    document
   end
 
   @doc """
@@ -199,22 +150,21 @@ defmodule Pdf do
     |> send_resp(200, report)
   ```
   """
-  defcall export(_from, document) do
-    {:reply, Document.to_iolist(document) |> :binary.list_to_bin(), document}
+  def export(%Document{} = document) do
+    Document.to_iolist(%Document{} = document)
+    |> :binary.list_to_bin()
   end
 
   @doc """
   Add a new page to the Pdf with the given page size.
   """
-
-  defcall add_page(size, _from, document) do
-    {:reply, self(), Document.add_page(document, size: size)}
+  def add_page(%Document{} = document, size) do
+    Document.add_page(%Document{} = document, size: size)
   end
 
   @doc "Returns the current page number."
-
-  defcall page_number(_from, document) do
-    {:reply, Document.page_number(document), document}
+  def page_number(%Document{} = document) do
+    Document.page_number(%Document{} = document)
   end
 
   @doc """
@@ -222,10 +172,9 @@ defmodule Pdf do
 
   This takes either a `Pdf.Color.color/1` atom, an RGB tuple or a CMYK tuple.
   """
-
-  @spec set_fill_color(pid, color_name | rgb | cmyk) :: pid
-  defcall set_fill_color(color, _from, document) do
-    {:reply, self(), Document.set_fill_color(document, color)}
+  # @spec set_fill_color(pid, color_name | rgb | cmyk) :: pid
+  def set_fill_color(%Document{} = document, color) do
+    Document.set_fill_color(%Document{} = document, color)
   end
 
   @doc """
@@ -233,59 +182,57 @@ defmodule Pdf do
 
   This takes either a `Pdf.Color.color/1` atom, an RGB tuple or a CMYK tuple.
   """
-  @spec set_stroke_color(pid, color_name | rgb | cmyk) :: pid
-  defcall set_stroke_color(color, _from, document) do
-    {:reply, self(), Document.set_stroke_color(document, color)}
+  # @spec set_stroke_color(pid, color_name | rgb | cmyk) :: pid
+  def set_stroke_color(%Document{} = document, color) do
+    Document.set_stroke_color(%Document{} = document, color)
   end
 
   @doc """
   The width to use when drawing lines.
   """
-  @spec set_line_width(pid, number) :: pid
-  defcall set_line_width(width, _from, document) do
-    {:reply, self(), Document.set_line_width(document, width)}
+  # @spec set_line_width(pid, number) :: pid
+  def set_line_width(%Document{} = document, width) do
+    Document.set_line_width(%Document{} = document, width)
   end
 
   @doc """
   The line endings to draw, see `t:cap_style/0`.
   """
-  @spec set_line_cap(pid, cap_style) :: pid
-  defcall set_line_cap(style, _from, document) do
-    {:reply, self(), Document.set_line_cap(document, style)}
+  # @spec set_line_cap(pid, cap_style) :: pid
+  def set_line_cap(%Document{} = document, style) do
+    Document.set_line_cap(%Document{} = document, style)
   end
 
   @doc """
   The join style to use where lines meet, see `t:join_style/0`.
   """
-  @spec set_line_join(pid, join_style) :: pid
-  defcall set_line_join(style, _from, document) do
-    {:reply, self(), Document.set_line_join(document, style)}
+  # @spec set_line_join(pid, join_style) :: pid
+  def set_line_join(%Document{} = document, style) do
+    Document.set_line_join(%Document{} = document, style)
   end
 
   @doc """
   Draw a rectangle from coordinates x,y (lower left corner) for a given width and height.
   """
-
-  @spec rectangle(pid, coords, dimension) :: pid
-  defcall rectangle(coords, dimensions, _from, document) do
-    {:reply, self(), Document.rectangle(document, coords, dimensions)}
+  # @spec rectangle(pid, coords, dimension) :: pid
+  def rectangle(%Document{} = document, coords, dimensions) do
+    Document.rectangle(%Document{} = document, coords, dimensions)
   end
 
   @doc """
   Draw a line between 2 points.
   """
-  @spec line(pid, coords, coords) :: pid
-  defcall line(coords, coords_to, _from, document) do
-    {:reply, self(), Document.line(document, coords, coords_to)}
+  # @spec line(pid, coords, coords) :: pid
+  def line(%Document{} = document, coords, coords_to) do
+    Document.line(%Document{} = document, coords, coords_to)
   end
 
   @doc """
   Move the cursor to the given coordinates.
   """
-
-  @spec move_to(pid, coords) :: pid
-  defcall move_to(coords, _from, document) do
-    {:reply, self(), Document.move_to(document, coords)}
+  # @spec move_to(pid, coords) :: pid
+  def move_to(%Document{} = document, coords) do
+    Document.move_to(%Document{} = document, coords)
   end
 
   @doc """
@@ -296,27 +243,25 @@ defmodule Pdf do
     |> Pdf.line_append({200, 200})
   ```
   """
-
-  @spec line_append(pid, coords) :: pid
-  defcall line_append(coords, _from, document) do
-    {:reply, self(), Document.line_append(document, coords)}
+  # @spec line_append(pid, coords) :: pid
+  def line_append(%Document{} = document, coords) do
+    Document.line_append(%Document{} = document, coords)
   end
 
   @doc """
   Perform all the previous graphic commands.
   """
-  @spec stroke(pid) :: pid
-  defcall stroke(_from, document) do
-    {:reply, self(), Document.stroke(document)}
+  # @spec stroke(pid) :: pid
+  def stroke(%Document{} = document) do
+    Document.stroke(%Document{} = document)
   end
 
   @doc """
   Fill the current drawing with the previously set color.
   """
-
-  @spec fill(pid) :: pid
-  defcall fill(_from, document) do
-    {:reply, self(), Document.fill(document)}
+  # @spec fill(pid) :: pid
+  def fill(%Document{} = document) do
+    Document.fill(%Document{} = document)
   end
 
   @doc """
@@ -329,20 +274,19 @@ defmodule Pdf do
   `:bold`   | boolean | false
   `:italic` | boolean | false
   """
-
-  @spec set_font(pid, binary, integer | list) :: pid
-  def set_font(pid, font_name, opts) when is_list(opts) do
+  #  @spec set_font(pid, binary, integer | list) :: pid
+  def set_font(%Document{} = document, font_name, opts) when is_list(opts) do
     font_size = Keyword.get(opts, :size, 16)
-    set_font(pid, font_name, font_size, Keyword.delete(opts, :size))
+    set_font(%Document{} = document, font_name, font_size, Keyword.delete(opts, :size))
   end
 
-  def set_font(pid, font_name, font_size) when is_number(font_size) do
-    set_font(pid, font_name, font_size, [])
+  def set_font(%Document{} = document, font_name, font_size) when is_number(font_size) do
+    set_font(%Document{} = document, font_name, font_size, [])
   end
 
   @doc false
-  defcall set_font(font_name, font_size, opts, _from, document) do
-    {:reply, self(), Document.set_font(document, font_name, font_size, opts)}
+  def set_font(%Document{} = document, font_name, font_size, opts) do
+    Document.set_font(%Document{} = document, font_name, font_size, opts)
   end
 
   @doc """
@@ -350,8 +294,8 @@ defmodule Pdf do
 
   The font has to have been previously set!
   """
-  defcall set_font_size(size, _from, document) do
-    {:reply, self(), Document.set_font_size(document, size)}
+  def set_font_size(%Document{} = document, size) do
+    Document.set_font_size(%Document{} = document, size)
   end
 
   @doc """
@@ -372,9 +316,8 @@ defmodule Pdf do
 
   You have to `add_font/2` all variants you want to use, bold, italic, ...
   """
-
-  defcall add_font(path, _from, document) do
-    {:reply, self(), Document.add_external_font(document, path)}
+  def add_font(%Document{} = document, path) do
+    Document.add_external_font(%Document{} = document, path)
   end
 
   @doc """
@@ -382,9 +325,8 @@ defmodule Pdf do
 
   Today, leading is often used synonymously with "line height" or "line spacing."
   """
-
-  defcall set_text_leading(leading, _from, document) do
-    {:reply, self(), Document.set_text_leading(document, leading)}
+  def set_text_leading(%Document{} = document, leading) do
+    Document.set_text_leading(%Document{} = document, leading)
   end
 
   @doc """
@@ -409,9 +351,8 @@ defmodule Pdf do
   If using an external font, you have to `add_font/2` all variants you want to use.
 
   """
-
-  defcall text_at(coords, text, _from, document) do
-    {:reply, self(), Document.text_at(document, coords, text)}
+  def text_at(%Document{} = document, coords, text) do
+    Document.text_at(%Document{} = document, coords, text)
   end
 
   @doc """
@@ -425,9 +366,8 @@ defmodule Pdf do
   Kerning refers to the spacing between the characters of a font. Without kerning, each character takes up a block of space and the next character is printed after it. When kerning is applied to a font, the characters can vertically overlap. This does not mean that the characters actually touch, but instead it allows part of two characters to take up the same vertical space. Kerning is available in some fonts.
 
   """
-
-  defcall text_at(coords, text, opts, _from, document) do
-    {:reply, self(), Document.text_at(document, coords, text, opts)}
+  def text_at(%Document{} = document, coords, text, opts) do
+    Document.text_at(%Document{} = document, coords, text, opts)
   end
 
   @doc """
@@ -462,11 +402,9 @@ defmodule Pdf do
 
 
   """
-
-  @spec text_wrap(pid, coords(), dimension(), binary | list) :: pid
-  defcall text_wrap(coords, dimensions, text, _from, document) do
-    {document, remaining} = Document.text_wrap(document, coords, dimensions, text)
-    {:reply, {self(), remaining}, document}
+  # @spec text_wrap(pid, coords(), dimension(), binary | list) :: pid
+  def text_wrap(%Document{} = document, coords, dimensions, text) do
+    Document.text_wrap(%Document{} = document, coords, dimensions, text)
   end
 
   @doc """
@@ -477,28 +415,25 @@ defmodule Pdf do
   `:align` | :left , :center , :right | :left
   `:kerning` | `boolean` | false
   """
-  @spec text_wrap(pid, coords(), dimension(), binary | list, keyword) :: pid
-  defcall text_wrap(coords, dimensions, text, opts, _from, document) do
-    {document, remaining} = Document.text_wrap(document, coords, dimensions, text, opts)
-    {:reply, {self(), remaining}, document}
+  # @spec text_wrap(pid, coords(), dimension(), binary | list, keyword) :: pid
+  def text_wrap(%Document{} = document, coords, dimensions, text, opts) do
+    Document.text_wrap(%Document{} = document, coords, dimensions, text, opts)
   end
 
   @doc """
   This function has the same options as `text_wrap/4`, but if the text is too large for the box, a `RuntimeError` will be raised.
   """
-  @spec text_wrap!(pid, coords(), dimension(), binary | list) :: pid
-  defcall text_wrap!(coords, dimensions, text, _from, document) do
-    document = Document.text_wrap!(document, coords, dimensions, text)
-    {:reply, self(), document}
+  # @spec text_wrap!(pid, coords(), dimension(), binary | list) :: pid
+  def text_wrap!(%Document{} = document, coords, dimensions, text) do
+    Document.text_wrap!(%Document{} = document, coords, dimensions, text)
   end
 
   @doc """
   This function has the same options as `text_wrap/5`, but if the text is too large for the box, a `RuntimeError` will be raised.
   """
-  @spec text_wrap!(pid, coords(), dimension(), binary | list, keyword) :: pid
-  defcall text_wrap!(coords, dimensions, text, opts, _from, document) do
-    document = Document.text_wrap!(document, coords, dimensions, text, opts)
-    {:reply, self(), document}
+  # @spec text_wrap!(pid, coords(), dimension(), binary | list, keyword) :: pid
+  def text_wrap!(%Document{} = document, coords, dimensions, text, opts) do
+    Document.text_wrap!(%Document{} = document, coords, dimensions, text, opts)
   end
 
   @doc """
@@ -507,25 +442,23 @@ defmodule Pdf do
 
   Kerning can be set, see `text_at/4` for more information.
   """
-
-  @spec text_lines(pid, coords(), list, keyword) :: pid
-  defcall text_lines(coords, lines, opts, _from, document) do
-    {:reply, self(), Document.text_lines(document, coords, lines, opts)}
+  # @spec text_lines(pid, coords(), list, keyword) :: pid
+  def text_lines(%Document{} = document, coords, lines, opts) do
+    Document.text_lines(%Document{} = document, coords, lines, opts)
   end
 
   @doc """
   This function draws a number of text lines starting at the given coordinates.
   The list can overrun the page, no errors or wrapping will occur.
   """
-  @spec text_lines(pid, coords(), list) :: pid
-  defcall text_lines(coords, lines, _from, document) do
-    {:reply, self(), Document.text_lines(document, coords, lines)}
+  # @spec text_lines(pid, coords(), list) :: pid
+  def text_lines(%Document{} = document, coords, lines) do
+    Document.text_lines(%Document{} = document, coords, lines)
   end
 
   @doc false
-  defcall table(coords, dimensions, data, _from, document) do
-    {document, remaining} = Document.table(document, coords, dimensions, data)
-    {:reply, {self(), remaining}, document}
+  def table(%Document{} = document, coords, dimensions, data) do
+    Document.table(%Document{} = document, coords, dimensions, data)
   end
 
   @doc """
@@ -533,15 +466,13 @@ defmodule Pdf do
 
   See [Tables](tables.html) for more information on how to use tables.
   """
-  defcall table(coords, dimensions, data, opts, _from, document) do
-    {document, remaining} = Document.table(document, coords, dimensions, data, opts)
-    {:reply, {self(), remaining}, document}
+  def table(%Document{} = document, coords, dimensions, data, opts) do
+    Document.table(%Document{} = document, coords, dimensions, data, opts)
   end
 
   @doc false
-  defcall table!(coords, dimensions, data, _from, document) do
-    document = Document.table!(document, coords, dimensions, data)
-    {:reply, self(), document}
+  def table!(%Document{} = document, coords, dimensions, data) do
+    Document.table!(%Document{} = document, coords, dimensions, data)
   end
 
   @doc """
@@ -550,85 +481,90 @@ defmodule Pdf do
 
   See [Tables](tables.html) for more information on how to use tables.
   """
-  defcall table!(coords, dimensions, data, opts, _from, document) do
-    document = Document.table!(document, coords, dimensions, data, opts)
-    {:reply, self(), document}
+  def table!(%Document{} = document, coords, dimensions, data, opts) do
+    Document.table!(%Document{} = document, coords, dimensions, data, opts)
   end
 
   @doc """
   Add an images (PNG, or JPEG only) at the given coordinates.
   """
-
-  def add_image(pid, coords, image_path), do: add_image(pid, coords, image_path, [])
+  def add_image(%Document{} = document, coords, image_path),
+    do: add_image(%Document{} = document, coords, image_path, [])
 
   @doc """
   Add an images (PNG, or JPEG only) at the given coordinates.
 
   You can specift a `:width` and `:height` in the options, the image will then be scaled.
   """
-  defcall add_image(coords, image_path, opts, _from, document) do
-    {:reply, self(), Document.add_image(document, coords, image_path, opts)}
+  def add_image(%Document{} = document, coords, image_path, opts) do
+    Document.add_image(%Document{} = document, coords, image_path, opts)
   end
 
   @doc """
   Returns a `{width, height}` for the current page.
   """
-  defcall size(_from, document) do
-    {:reply, Document.size(document), document}
+  def size(%Document{} = document) do
+    Document.size(%Document{} = document)
   end
 
   @doc """
   Gets the current cursor position, that is the vertical position.
   """
-  @spec cursor(pid) :: number
-  defcall cursor(_from, document) do
-    {:reply, Document.cursor(document), document}
+  # @spec cursor(pid) :: number
+  def cursor(%Document{} = document) do
+    Document.cursor(%Document{} = document)
   end
 
   @doc """
   Set the cursor position.
   """
-  @spec set_cursor(pid, number) :: pid
-  defcall set_cursor(y, _from, document) do
-    {:reply, self(), Document.set_cursor(document, y)}
+  # @spec set_cursor(pid, number) :: pid
+  def set_cursor(%Document{} = document, y) do
+    Document.set_cursor(%Document{} = document, y)
   end
 
   @doc """
   Move the cursor `amount` points down.
   """
-  defcall move_down(amount, _from, document) do
-    {:reply, self(), Document.move_down(document, amount)}
+  def move_down(%Document{} = document, amount) do
+    Document.move_down(%Document{} = document, amount)
   end
 
   @doc """
   Sets the author in the PDF information section.
   """
-  defcall(set_author(author, _from, state), do: set_info(:author, author, state))
+  def set_author(%Document{} = document, author),
+    do: set_info(%Document{} = document, :author, author)
 
   @doc """
   Sets the creator in the PDF information section.
   """
-  defcall(set_creator(creator, _from, state), do: set_info(:creator, creator, state))
+  def set_creator(%Document{} = document, creator),
+    do: set_info(%Document{} = document, :creator, creator)
 
   @doc """
   Sets the keywords in the PDF information section.
   """
-  defcall(set_keywords(keywords, _from, state), do: set_info(:keywords, keywords, state))
+  def set_keywords(%Document{} = document, keywords),
+    do: set_info(%Document{} = document, :keywords, keywords)
 
   @doc """
   Sets the producer in the PDF information section.
   """
-  defcall(set_producer(producer, _from, state), do: set_info(:producer, producer, state))
+  def set_producer(%Document{} = document, producer),
+    do: set_info(%Document{} = document, :producer, producer)
 
   @doc """
   Sets the subject in the PDF information section.
   """
-  defcall(set_subject(subject, _from, state), do: set_info(:subject, subject, state))
+  def set_subject(%Document{} = document, subject),
+    do: set_info(%Document{} = document, :subject, subject)
 
   @doc """
   Sets the title in the PDF information section.
   """
-  defcall(set_title(title, _from, state), do: set_info(:title, title, state))
+  def set_title(%Document{} = document, title),
+    do: set_info(%Document{} = document, :title, title)
 
   @doc """
   Set multiple keys in the PDF information setion.
@@ -645,18 +581,12 @@ defmodule Pdf do
   """
   @typedoc false
   @type info_list :: keyword
-  @spec set_info(pid, info_list) :: pid
-  defcall set_info(info_list, _from, document) do
-    {:reply, self(), Document.put_info(document, info_list)}
+  # @spec set_info(pid, info_list) :: pid
+  def set_info(%Document{} = document, info_list) do
+    Document.put_info(%Document{} = document, info_list)
   end
 
-  defp set_info(key, value, document) do
-    {:reply, self(), Document.put_info(document, key, value)}
-  end
-
-  def terminate(_, %{objects: objects, fonts: fonts}) do
-    GenServer.stop(objects)
-    GenServer.stop(fonts)
-    nil
+  defp set_info(%Document{} = document, key, value) do
+    Document.put_info(%Document{} = document, key, value)
   end
 end

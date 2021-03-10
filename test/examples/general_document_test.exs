@@ -5,9 +5,7 @@ defmodule Pdf.Examples.GeneralDocumentTest do
   test "generate document" do
     file_path = output("general_document.pdf")
 
-    {:ok, pdf} = Pdf.new(size: :a4, compress: false)
-
-    pdf
+    Pdf.new(size: :a4, compress: false)
     |> Pdf.set_info(
       title: "Test Document",
       producer: "Test producer",
@@ -25,7 +23,6 @@ defmodule Pdf.Examples.GeneralDocumentTest do
     |> write_paragraphs1()
     |> write_paragraphs2()
     |> Pdf.write_to(file_path)
-    |> Pdf.cleanup()
 
     if @open, do: System.cmd("open", ["-g", file_path])
   end

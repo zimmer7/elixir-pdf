@@ -6,102 +6,100 @@ defmodule PdfTest do
   test "new/1" do
     file_path = output("qtest.pdf")
 
-    Pdf.build([size: :a4, compress: false], fn pdf ->
-      pdf
-      |> Pdf.set_info(
-        title: "Test Document",
-        producer: "Test producer",
-        creator: "Test Creator",
-        created: ~D"2018-05-22",
-        modified: ~D"2018-05-22",
-        keywords: "word word word",
-        author: "Test Author",
-        subject: "Test Subject"
-      )
-      |> Pdf.set_font("Helvetica", 12)
-      |> Pdf.text_at({10, 400}, "Hello World😃", encoding_replacement_character: "")
-      |> Pdf.text_lines({10, 300}, [
-        "First line å",
-        "Second line ä",
-        "Third line ö"
-      ])
-      |> Pdf.text_lines(
-        {300, 300},
-        [
-          "Kerned First line å",
-          "Kerned Second line ä",
-          "Kerned Third line ö"
-        ],
-        kerning: true
-      )
-      |> Pdf.text_lines({200, 300}, ["smile😀"], encoding_replacement_character: "")
-      |> Pdf.add_image({25, 50}, fixture("rgb.jpg"))
-      |> Pdf.add_image({175, 50}, fixture("cmyk.jpg"))
-      |> Pdf.add_image({325, 50}, fixture("grayscale.jpg"))
-      |> Pdf.add_image({200, 450}, fixture("grayscale.png"))
-      |> Pdf.add_image({310, 450}, fixture("truecolour.png"))
-      |> Pdf.add_image({420, 450}, {:binary, File.read!(fixture("indexed.png"))})
-      |> Pdf.rectangle({200, 365}, {100, 75})
-      |> Pdf.set_fill_color(:red)
-      |> Pdf.fill()
-      |> Pdf.add_image({200, 365}, fixture("grayscale-alpha.png"))
-      |> Pdf.rectangle({310, 365}, {100, 75})
-      |> Pdf.fill()
-      |> Pdf.set_fill_color(:black)
-      |> Pdf.add_image({310, 365}, fixture("truecolour-alpha.png"))
-      |> Pdf.add_font("test/fonts/Verdana-Bold.afm")
-      |> Pdf.set_font("Verdana-Bold", 28)
-      |> Pdf.text_at({120.070, 762.653}, "External fonts work")
-      |> Pdf.set_font("Helvetica", 28)
-      |> Pdf.text_at({200, 230}, "Back to Helvetica")
-      |> Pdf.set_font("Helvetica", size: 16, bold: true)
-      |> test_normalize_unicode()
-      |> Pdf.set_font("Helvetica", 10)
-      |> all_win_ansi_chars({10, 180})
-      |> Pdf.set_fill_color(:red)
-      |> Pdf.text_at({50, 720}, "A string without kerning: VA")
-      |> Pdf.set_fill_color({0.5, 0.0, 0.5})
-      |> Pdf.text_at({50, 710}, "A string with kerning: VA", kerning: true)
-      |> Pdf.set_fill_color({0.5, 0.0, 0.5, 0.5})
-      |> Pdf.text_at({50, 680}, "String coloured with CMYK")
-      |> Pdf.set_line_width(2)
-      |> Pdf.set_stroke_color(:blue)
-      |> Pdf.rectangle({20, 550}, {200, 100})
-      |> Pdf.stroke()
-      |> Pdf.set_line_width(0.5)
-      |> Pdf.line({20, 550}, {220, 650})
-      |> Pdf.move_to({220, 550})
-      |> Pdf.line_append({20, 650})
-      |> Pdf.stroke()
-      |> Pdf.rectangle({250, 550}, {200, 100})
-      |> Pdf.set_stroke_color(:gray)
-      |> Pdf.stroke()
-      |> Pdf.set_fill_color(:black)
-      |> Pdf.set_text_leading(14)
-      |> Pdf.text_wrap(
-        {250, 650},
-        {200, 100},
-        "Lorem ipsum dolor sit amet, consectetur\u00A0adipiscing elit. Nullam posuere-nibh consectetur, ullamcorper lorem vel, blandit est. Phasellus ut venenatis odio. Pellentesque eget venenatis dolor.\nUt mattis dui id nulla porta, sit amet congue lacus blandit.😁",
-        align: :center,
-        encoding_replacement_character: ""
-      )
-      |> elem(0)
-      |> Pdf.set_text_leading(10)
-      |> Pdf.text_wrap(
-        {50, 500},
-        {100, 100},
-        [
-          {"Lorem "},
-          {"ipsum dolor ", bold: true, size: 12},
-          {"sit amet", color: :red},
-          {", consectetur ", italic: true, size: 14},
-          {"adipiscing elit", bold: true, italic: true}
-        ],
-        align: :right
-      )
-      |> elem(0)
-      |> Pdf.write_to(file_path)
-    end)
+    Pdf.new(size: :a4, compress: false)
+    |> Pdf.set_info(
+      title: "Test Document",
+      producer: "Test producer",
+      creator: "Test Creator",
+      created: ~D"2018-05-22",
+      modified: ~D"2018-05-22",
+      keywords: "word word word",
+      author: "Test Author",
+      subject: "Test Subject"
+    )
+    |> Pdf.set_font("Helvetica", 12)
+    |> Pdf.text_at({10, 400}, "Hello World😃", encoding_replacement_character: "")
+    |> Pdf.text_lines({10, 300}, [
+      "First line å",
+      "Second line ä",
+      "Third line ö"
+    ])
+    |> Pdf.text_lines(
+      {300, 300},
+      [
+        "Kerned First line å",
+        "Kerned Second line ä",
+        "Kerned Third line ö"
+      ],
+      kerning: true
+    )
+    |> Pdf.text_lines({200, 300}, ["smile😀"], encoding_replacement_character: "")
+    |> Pdf.add_image({25, 50}, fixture("rgb.jpg"))
+    |> Pdf.add_image({175, 50}, fixture("cmyk.jpg"))
+    |> Pdf.add_image({325, 50}, fixture("grayscale.jpg"))
+    |> Pdf.add_image({200, 450}, fixture("grayscale.png"))
+    |> Pdf.add_image({310, 450}, fixture("truecolour.png"))
+    |> Pdf.add_image({420, 450}, {:binary, File.read!(fixture("indexed.png"))})
+    |> Pdf.rectangle({200, 365}, {100, 75})
+    |> Pdf.set_fill_color(:red)
+    |> Pdf.fill()
+    |> Pdf.add_image({200, 365}, fixture("grayscale-alpha.png"))
+    |> Pdf.rectangle({310, 365}, {100, 75})
+    |> Pdf.fill()
+    |> Pdf.set_fill_color(:black)
+    |> Pdf.add_image({310, 365}, fixture("truecolour-alpha.png"))
+    |> Pdf.add_font("test/fonts/Verdana-Bold.afm")
+    |> Pdf.set_font("Verdana-Bold", 28)
+    |> Pdf.text_at({120.070, 762.653}, "External fonts work")
+    |> Pdf.set_font("Helvetica", 28)
+    |> Pdf.text_at({200, 230}, "Back to Helvetica")
+    |> Pdf.set_font("Helvetica", size: 16, bold: true)
+    |> test_normalize_unicode()
+    |> Pdf.set_font("Helvetica", 10)
+    |> all_win_ansi_chars({10, 180})
+    |> Pdf.set_fill_color(:red)
+    |> Pdf.text_at({50, 720}, "A string without kerning: VA")
+    |> Pdf.set_fill_color({0.5, 0.0, 0.5})
+    |> Pdf.text_at({50, 710}, "A string with kerning: VA", kerning: true)
+    |> Pdf.set_fill_color({0.5, 0.0, 0.5, 0.5})
+    |> Pdf.text_at({50, 680}, "String coloured with CMYK")
+    |> Pdf.set_line_width(2)
+    |> Pdf.set_stroke_color(:blue)
+    |> Pdf.rectangle({20, 550}, {200, 100})
+    |> Pdf.stroke()
+    |> Pdf.set_line_width(0.5)
+    |> Pdf.line({20, 550}, {220, 650})
+    |> Pdf.move_to({220, 550})
+    |> Pdf.line_append({20, 650})
+    |> Pdf.stroke()
+    |> Pdf.rectangle({250, 550}, {200, 100})
+    |> Pdf.set_stroke_color(:gray)
+    |> Pdf.stroke()
+    |> Pdf.set_fill_color(:black)
+    |> Pdf.set_text_leading(14)
+    |> Pdf.text_wrap(
+      {250, 650},
+      {200, 100},
+      "Lorem ipsum dolor sit amet, consectetur\u00A0adipiscing elit. Nullam posuere-nibh consectetur, ullamcorper lorem vel, blandit est. Phasellus ut venenatis odio. Pellentesque eget venenatis dolor.\nUt mattis dui id nulla porta, sit amet congue lacus blandit.😁",
+      align: :center,
+      encoding_replacement_character: ""
+    )
+    |> elem(0)
+    |> Pdf.set_text_leading(10)
+    |> Pdf.text_wrap(
+      {50, 500},
+      {100, 100},
+      [
+        {"Lorem "},
+        {"ipsum dolor ", bold: true, size: 12},
+        {"sit amet", color: :red},
+        {", consectetur ", italic: true, size: 14},
+        {"adipiscing elit", bold: true, italic: true}
+      ],
+      align: :right
+    )
+    |> elem(0)
+    |> Pdf.write_to(file_path)
 
     if @open, do: System.cmd("open", ["-g", file_path])
   end
@@ -176,14 +174,12 @@ defmodule PdfTest do
   end
 
   test "exception is passed through" do
-    Pdf.build([size: :a4, compress: false], fn pdf ->
-      assert_raise RuntimeError,
-                   "The supplied text did not fit within the supplied boundary",
-                   fn ->
-                     pdf
-                     |> Pdf.set_font("Helvetica", 12)
-                     |> Pdf.text_wrap!({10, 20}, {200, 10}, "Hello\nworld")
-                   end
-    end)
+    assert_raise RuntimeError,
+                 "The supplied text did not fit within the supplied boundary",
+                 fn ->
+                   Pdf.new(size: :a4, compress: false)
+                   |> Pdf.set_font("Helvetica", 12)
+                   |> Pdf.text_wrap!({10, 20}, {200, 10}, "Hello\nworld")
+                 end
   end
 end
