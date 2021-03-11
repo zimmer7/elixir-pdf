@@ -272,7 +272,8 @@ defmodule Pdf.Images.PNG do
 
   defp get_colorspace(0), do: "DeviceGray"
   defp get_colorspace(2), do: "DeviceRGB"
-  defp get_colorspace(3), do: "DeviceGray"
+  # Unused atm:
+  # defp get_colorspace(3), do: "DeviceGray"
   defp get_colorspace(4), do: "DeviceGray"
   defp get_colorspace(6), do: "DeviceRGB"
 

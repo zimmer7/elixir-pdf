@@ -40,6 +40,8 @@ defmodule Pdf.Mixfile do
 
   defp deps do
     [
+      {:dialyxir, "~> 1.1", only: [:dev], runtime: false},
+
       # Code style
       {:credo, "~> 1.0", only: [:dev, :test]},
 

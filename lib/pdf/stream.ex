@@ -1,5 +1,11 @@
 defmodule Pdf.Stream do
   @moduledoc false
+  @type t :: %__MODULE__{
+          compress: non_neg_integer(),
+          size: non_neg_integer(),
+          dictionary: map(),
+          content: [any()]
+        }
   defstruct compress: 6, size: 0, dictionary: %{}, content: []
 
   import Pdf.Size

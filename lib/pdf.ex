@@ -1,5 +1,8 @@
 defmodule Pdf do
-  alias Pdf.Document
+  alias Pdf.{
+    Document,
+    Page
+  }
 
   @moduledoc """
   The missing PDF library for Elixir.
@@ -106,7 +109,7 @@ defmodule Pdf do
   There is no standard font selected when creating a new PDF, so set one with `set_font/3` before adding text.
 
   """
-  @spec new(any) :: :ignore | {:error, any} | {:ok, pid}
+  @spec new(Keyword.t()) :: Document.t()
   def new(opts \\ []), do: Document.new(opts)
 
   @doc """

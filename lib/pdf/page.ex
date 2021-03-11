@@ -1,5 +1,21 @@
 defmodule Pdf.Page do
   @moduledoc false
+  import Pdf.Utils
+  alias Pdf.{Image, Fonts, Stream, Text, Font}
+
+  @type t :: %__MODULE__{
+          size: atom(),
+          stream: Stream.t(),
+          fonts: nil,
+          current_font: nil,
+          current_font_size: non_neg_integer(),
+          fill_color: atom(),
+          leading: integer(),
+          cursor: integer(),
+          in_text: boolean(),
+          saved: map(),
+          saving_state: boolean()
+        }
   defstruct size: :a4,
             stream: nil,
             fonts: nil,
@@ -16,9 +32,6 @@ defmodule Pdf.Page do
   defdelegate table(page, data, xy, wh, opts), to: Pdf.Table
   defdelegate table!(page, data, xy, wh), to: Pdf.Table
   defdelegate table!(page, data, xy, wh, opts), to: Pdf.Table
-
-  import Pdf.Utils
-  alias Pdf.{Image, Fonts, Stream, Text, Font}
 
   def new(opts \\ [size: :a4]),
     do: init(opts, %__MODULE__{stream: Stream.new()})
