@@ -1,4 +1,4 @@
-defmodule Pdf.RefTable do
+defmodule PDF.RefTable do
   @moduledoc false
   def to_iolist(objects, offset \\ 0) do
     {objects_iolist, offset} = objects_to_iolist(objects, offset)
@@ -20,7 +20,7 @@ defmodule Pdf.RefTable do
   defp objects_to_iolist([], offset, acc), do: {Enum.reverse(acc), offset}
 
   defp objects_to_iolist([object | tail], offset, acc) do
-    size = object |> Pdf.Export.to_iolist() |> :binary.list_to_bin() |> byte_size()
+    size = object |> PDF.Export.to_iolist() |> :binary.list_to_bin() |> byte_size()
     iolist = object_to_ref(object, offset)
     offset = offset + size
     objects_to_iolist(tail, offset, [iolist | acc])

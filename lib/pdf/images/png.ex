@@ -1,9 +1,9 @@
-defmodule Pdf.Images.PNG do
+defmodule PDF.Images.PNG do
   @moduledoc false
 
-  import Pdf.Utils
+  import PDF.Utils
 
-  alias Pdf.{Image, Dictionary, Stream, ObjectCollection}
+  alias PDF.{Image, Dictionary, Stream, ObjectCollection}
 
   defstruct bit_depth: nil,
             height: nil,
@@ -21,7 +21,7 @@ defmodule Pdf.Images.PNG do
 
   Examples:
 
-      > Pdf.Image.PNG.decode("path/to/image.png")
+      > PDF.Image.PNG.decode("path/to/image.png")
       {:ok, {8, 75, 100, 3}) # 8 bits, height: 75px, width: 100px, color type: 3 (indexed colour)
   """
   def decode(image_data) do
@@ -203,7 +203,7 @@ defmodule Pdf.Images.PNG do
   defp prepare_extra(%{color_type: 3} = image, objects) do
     stream = Stream.set(Stream.new(compress: false), image.palette)
     {:object, number, _} = object_key = ObjectCollection.create_object(objects, stream)
-    _object = Pdf.Object.new(number, ObjectCollection.get_object(objects, object_key))
+    _object = PDF.Object.new(number, ObjectCollection.get_object(objects, object_key))
 
     %{
       "Filter" => n("FlateDecode"),
@@ -253,7 +253,7 @@ defmodule Pdf.Images.PNG do
       )
 
     {:object, number, _} = object_key = ObjectCollection.create_object(objects, stream)
-    _object = Pdf.Object.new(number, ObjectCollection.get_object(objects, object_key))
+    _object = PDF.Object.new(number, ObjectCollection.get_object(objects, object_key))
 
     %{
       "Filter" => n("FlateDecode"),

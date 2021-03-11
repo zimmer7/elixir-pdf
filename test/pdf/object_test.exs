@@ -1,9 +1,9 @@
-defmodule Pdf.ObjectTest do
+defmodule PDF.ObjectTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.Object
-  alias Pdf.Dictionary
-  alias Pdf.Utils
+  alias PDF.Object
+  alias PDF.Dictionary
+  alias PDF.Utils
 
   test "new/1" do
     object = Object.new(1)
@@ -26,7 +26,7 @@ defmodule Pdf.ObjectTest do
       Object.new(1)
       |> Object.set_value("A string")
 
-    iolist = Pdf.Export.to_iolist(object)
+    iolist = PDF.Export.to_iolist(object)
     assert iolist == ["1", " ", "0", " obj\n", ["(", "A string", ")"], "\nendobj\n"]
 
     string = :erlang.iolist_to_binary(iolist)
@@ -54,7 +54,7 @@ defmodule Pdf.ObjectTest do
     object = Object.new(1, dict)
 
     export =
-      Pdf.Export.to_iolist(object)
+      PDF.Export.to_iolist(object)
       |> Enum.join()
 
     assert Object.size(object) == byte_size(export)

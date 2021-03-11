@@ -1,6 +1,6 @@
-defmodule Pdf.Table do
+defmodule PDF.Table do
   @moduledoc false
-  alias Pdf.{Page, Text}
+  alias PDF.{Page, Text}
 
   def table!(page, xy, wh, data, opts \\ [])
 

@@ -1,4 +1,4 @@
-defmodule Pdf.Mixfile do
+defmodule PDF.Mixfile do
   use Mix.Project
 
   @version "0.5.0"
@@ -19,7 +19,7 @@ defmodule Pdf.Mixfile do
         [
           source_ref: "v#{@version}",
           canonical: "http://hexdocs.pm/pdf",
-          main: "Pdf",
+          main: "PDF",
           source_url: @github_url,
           extras: ["extra_doc/Tables.md"],
           assets: "extra_doc/assets",

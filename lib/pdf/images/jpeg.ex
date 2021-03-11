@@ -1,9 +1,9 @@
-defmodule Pdf.Images.JPEG do
+defmodule PDF.Images.JPEG do
   @moduledoc false
 
-  import Pdf.Utils
+  import PDF.Utils
 
-  alias Pdf.{Array, Dictionary, Image}
+  alias PDF.{Array, Dictionary, Image}
 
   defstruct bit_depth: nil,
             height: nil,
@@ -16,8 +16,8 @@ defmodule Pdf.Images.JPEG do
 
   Examples:
 
-      > Pdf.Image.JPEG.decode("path/to/image.jpg")
-      %Pdf.Image.JPEG{bit_depth: 8, height: 75, width: 100, color_type: 3}
+      > PDF.Image.JPEG.decode("path/to/image.jpg")
+      %PDF.Image.JPEG{bit_depth: 8, height: 75, width: 100, color_type: 3}
   """
   def decode(image_data) do
     parse_jpeg(image_data)

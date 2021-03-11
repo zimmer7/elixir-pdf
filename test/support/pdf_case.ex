@@ -1,9 +1,9 @@
-defmodule Pdf.Case do
+defmodule PDF.Case do
   use ExUnit.CaseTemplate
 
   using do
     quote do
-      import Pdf.Case
+      import PDF.Case
 
       setup_all do
         File.mkdir_p(__DIR__ |> Path.join("../output"))
@@ -67,7 +67,7 @@ defmodule Pdf.Case do
 
   def export(%{stream: stream}) do
     (stream
-     |> Pdf.Export.to_iolist()
+     |> PDF.Export.to_iolist()
      |> IO.iodata_to_binary()
      |> String.split("\n")
      |> Enum.drop_while(&(&1 != "stream"))

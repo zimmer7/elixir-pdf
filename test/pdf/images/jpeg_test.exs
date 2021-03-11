@@ -1,7 +1,7 @@
-defmodule Pdf.Images.JPEGTest do
-  use Pdf.Case, async: true
+defmodule PDF.Images.JPEGTest do
+  use PDF.Case, async: true
 
-  alias Pdf.Images.JPEG
+  alias PDF.Images.JPEG
 
   test "decode/1" do
     assert %{bit_depth: 8, height: 75, width: 100, color_type: 3} =

@@ -1,12 +1,12 @@
-defmodule Pdf.Examples.GeneralDocumentTest do
-  use Pdf.Case, async: true
+defmodule PDF.Examples.GeneralDocumentTest do
+  use PDF.Case, async: true
 
   @open false
   test "generate document" do
     file_path = output("general_document.pdf")
 
-    Pdf.new(size: :a4, compress: false)
-    |> Pdf.set_info(
+    PDF.new(size: :a4, compress: false)
+    |> PDF.set_info(
       title: "Test Document",
       producer: "Test producer",
       creator: "Test Creator",
@@ -18,28 +18,28 @@ defmodule Pdf.Examples.GeneralDocumentTest do
     |> add_header("Lorem ipsum dolor sit amet")
     |> write_paragraphs1()
     |> write_paragraphs2()
-    |> Pdf.add_page({:a4, :landscape})
-    |> Pdf.move_down(20)
+    |> PDF.add_page({:a4, :landscape})
+    |> PDF.move_down(20)
     |> write_paragraphs1()
     |> write_paragraphs2()
-    |> Pdf.write_to(file_path)
+    |> PDF.write_to(file_path)
 
     if @open, do: System.cmd("open", ["-g", file_path])
   end
 
   defp add_header(pdf, header) do
-    %{width: width, height: height} = Pdf.size(pdf)
+    %{width: width, height: height} = PDF.size(pdf)
 
     pdf
-    |> Pdf.set_font("Helvetica", 16, bold: true)
-    |> Pdf.text_wrap!({20, height - 40}, {width - 40, 20}, header, align: :center)
-    |> Pdf.move_down(16)
+    |> PDF.set_font("Helvetica", 16, bold: true)
+    |> PDF.text_wrap!({20, height - 40}, {width - 40, 20}, header, align: :center)
+    |> PDF.move_down(16)
   end
 
   defp write_paragraphs1(pdf) do
-    %{width: width} = Pdf.size(pdf)
+    %{width: width} = PDF.size(pdf)
 
-    cursor = Pdf.cursor(pdf)
+    cursor = PDF.cursor(pdf)
 
     text = """
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse elementum enim metus, quis posuere sem molestie interdum. Ut efficitur odio lectus, uty facilisis odio tempor quis. Ut ut risus quis tellus placerat tristique ut ultrices leo. Etiam ante lacus, pulvinar non aliquam luctus, efficitur vel velit. Aenean nec urna metus. Sed aliquam libero ligula, ac commodo turpis pulvinar sed. Aenean interdum elementum tempor. Cras tempus feugiat consequat. Mauris ut nulla et orci dapibus auctor a sit amet odio. Vivamus sit amet mi libero. Fusce a neque sagittis, volutpat ligula sed, eleifend felis. Ut luctus metus justo, id porta dui dignissim vitae. Duis sit amet maximus justo, non finibus quam. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla ultrices diam nec vulputate congue. Duis ornare pulvinar nulla. Sed at justo nec tortor efficitur dapibus ac non enim. Nam sed finibus odio, ac pretium mi. In mattis viverra cursus. Integer a risus sagittis tortor eleifend sollicitudin. Nullam fermentum maximus odio at laoreet. Maecenas malesuada sagittis aliquet.
@@ -54,28 +54,28 @@ defmodule Pdf.Examples.GeneralDocumentTest do
 
     {updated_pdf, {:continue, _} = remaining} =
       pdf
-      |> Pdf.set_font("Helvetica", 12)
-      |> Pdf.add_image({padding, cursor - image_height}, fixture("rgb.jpg"))
-      |> Pdf.text_wrap(
+      |> PDF.set_font("Helvetica", 12)
+      |> PDF.add_image({padding, cursor - image_height}, fixture("rgb.jpg"))
+      |> PDF.text_wrap(
         {padding + image_width + image_margin, cursor},
         {width - padding * 2 - image_width - image_margin, image_height + image_margin},
         String.trim(text)
       )
 
-    cursor = Pdf.cursor(updated_pdf)
+    cursor = PDF.cursor(updated_pdf)
 
     {final_pdf, :complete} =
       updated_pdf
-      |> Pdf.set_font("Helvetica", 12)
-      |> Pdf.text_wrap({padding, cursor}, {width - padding * 2, cursor - padding}, remaining)
+      |> PDF.set_font("Helvetica", 12)
+      |> PDF.text_wrap({padding, cursor}, {width - padding * 2, cursor - padding}, remaining)
 
-    Pdf.move_down(final_pdf, 12)
+    PDF.move_down(final_pdf, 12)
   end
 
   defp write_paragraphs2(pdf) do
-    %{width: width} = Pdf.size(pdf)
+    %{width: width} = PDF.size(pdf)
 
-    cursor = Pdf.cursor(pdf)
+    cursor = PDF.cursor(pdf)
 
     text = """
     Etiam fermentum molestie diam vitae consequat. Etiam vitae arcu orci. Curabitur at feugiat mauris. Vestibulum ultrices ipsum dolor, ac fringilla nibh suscipit eget. Donec convallis leo sit amet euismod convallis. Fusce id dui fermentum velit venenatis facilisis. Sed eleifend eget tellus vel dictum. Donec nec nibh quis ex elementum fringilla volutpat in dui. Nunc porta luctus turpis, vel eleifend sapien bibendum faucibus. Cras malesuada sit amet neque sit amet varius.
@@ -86,12 +86,12 @@ defmodule Pdf.Examples.GeneralDocumentTest do
     padding = 20
 
     pdf
-    |> Pdf.set_font("Helvetica", 12)
-    |> Pdf.text_wrap!(
+    |> PDF.set_font("Helvetica", 12)
+    |> PDF.text_wrap!(
       {padding, cursor},
       {width - padding * 2, cursor - padding},
       String.trim(text)
     )
-    |> Pdf.move_down(12)
+    |> PDF.move_down(12)
   end
 end

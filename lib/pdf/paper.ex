@@ -1,4 +1,4 @@
-defmodule Pdf.Paper do
+defmodule PDF.Paper do
   @moduledoc false
 
   [

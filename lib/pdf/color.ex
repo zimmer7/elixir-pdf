@@ -1,4 +1,4 @@
-defmodule Pdf.Color do
+defmodule PDF.Color do
   @moduledoc """
   A list of predefined colors you can use
   """
@@ -160,6 +160,6 @@ defmodule Pdf.Color do
   }
   """
 
-  @spec color(Pdf.color_name()) :: Pdf.rgb()
+  @spec color(PDF.color_name()) :: PDF.rgb()
   def color(color), do: raise(ArgumentError, "Undefined color #{color}")
 end

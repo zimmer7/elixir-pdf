@@ -1,7 +1,7 @@
-defmodule Pdf.Page do
+defmodule PDF.Page do
   @moduledoc false
-  import Pdf.Utils
-  alias Pdf.{Image, Fonts, Stream, Text, Font}
+  import PDF.Utils
+  alias PDF.{Image, Fonts, Stream, Text, Font}
 
   @type t :: %__MODULE__{
           size: atom(),
@@ -28,10 +28,10 @@ defmodule Pdf.Page do
             saved: %{},
             saving_state: false
 
-  defdelegate table(page, data, xy, wh), to: Pdf.Table
-  defdelegate table(page, data, xy, wh, opts), to: Pdf.Table
-  defdelegate table!(page, data, xy, wh), to: Pdf.Table
-  defdelegate table!(page, data, xy, wh, opts), to: Pdf.Table
+  defdelegate table(page, data, xy, wh), to: PDF.Table
+  defdelegate table(page, data, xy, wh, opts), to: PDF.Table
+  defdelegate table!(page, data, xy, wh), to: PDF.Table
+  defdelegate table!(page, data, xy, wh, opts), to: PDF.Table
 
   def new(opts \\ [size: :a4]),
     do: init(opts, %__MODULE__{stream: Stream.new()})
@@ -40,7 +40,7 @@ defmodule Pdf.Page do
   defp init([{:fonts, fonts} | tail], page), do: init(tail, %{page | fonts: fonts})
 
   defp init([{:size, size} | tail], page) do
-    [_bottom, _left, _width, height] = Pdf.Paper.size(size)
+    [_bottom, _left, _width, height] = PDF.Paper.size(size)
     init(tail, %{page | size: size, cursor: height})
   end
 
@@ -522,7 +522,7 @@ defmodule Pdf.Page do
   end
 
   def size(%{size: size}) do
-    [_bottom, _left, width, height] = Pdf.Paper.size(size)
+    [_bottom, _left, width, height] = PDF.Paper.size(size)
     %{width: width, height: height}
   end
 
@@ -558,7 +558,7 @@ defmodule Pdf.Page do
         num -> num
       end)
 
-    [Pdf.Array.new(text), "TJ"]
+    [PDF.Array.new(text), "TJ"]
   end
 
   defp draw_lines(%{current_font: %{module: font}} = page, [line], opts) do
@@ -571,7 +571,7 @@ defmodule Pdf.Page do
   end
 
   defp color_command(color_name, command) when is_atom(color_name) do
-    color = Pdf.Color.color(color_name)
+    color = PDF.Color.color(color_name)
     color_command(color, command)
   end
 
@@ -600,15 +600,15 @@ defmodule Pdf.Page do
   defp stroke_command({_r, _g, _b}), do: "RG"
   defp stroke_command({_c, _m, _y, _k}), do: "K"
 
-  defimpl Pdf.Size do
-    def size_of(%Pdf.Page{} = page), do: Pdf.Size.size_of(page.stream)
+  defimpl PDF.Size do
+    def size_of(%PDF.Page{} = page), do: PDF.Size.size_of(page.stream)
   end
 
-  defimpl Pdf.Export do
-    def to_iolist(%Pdf.Page{} = page), do: Pdf.Export.to_iolist(page.stream)
+  defimpl PDF.Export do
+    def to_iolist(%PDF.Page{} = page), do: PDF.Export.to_iolist(page.stream)
   end
 
-  defimpl Inspect do
-    def inspect(%Pdf.Page{size: size}, _opts), do: "#Page<size: #{inspect(size)}>"
-  end
+  # defimpl Inspect do
+  #   def inspect(%PDF.Page{size: size}, _opts), do: "#Page<size: #{inspect(size)}>"
+  # end
 end

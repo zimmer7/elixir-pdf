@@ -1,7 +1,7 @@
-defmodule Pdf.ObjectCollectionTest do
+defmodule PDF.ObjectCollectionTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.{Dictionary, ObjectCollection}
+  alias PDF.{Dictionary, ObjectCollection}
 
   test "adding an object to the collection" do
     {:ok, collection} = ObjectCollection.start_link()

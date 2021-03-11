@@ -1,9 +1,9 @@
-defmodule Pdf.Font do
+defmodule PDF.Font do
   @moduledoc false
 
-  import Pdf.Utils
-  alias Pdf.Font.Metrics
-  alias Pdf.{Array, Dictionary, Font}
+  import PDF.Utils
+  alias PDF.Font.Metrics
+  alias PDF.{Array, Dictionary, Font}
 
   font_metrics =
     Path.join(__DIR__, "../../fonts/*.afm")
@@ -18,7 +18,7 @@ defmodule Pdf.Font do
 
   font_metrics
   |> Enum.each(fn metrics ->
-    font_module = String.to_atom("Elixir.Pdf.Font.#{String.replace(metrics.name, "-", "")}")
+    font_module = String.to_atom("Elixir.PDF.Font.#{String.replace(metrics.name, "-", "")}")
 
     defmodule font_module do
       @moduledoc false
@@ -69,7 +69,7 @@ defmodule Pdf.Font do
       """
       def width(char_code)
 
-      Pdf.Encoding.WinAnsi.characters()
+      PDF.Encoding.WinAnsi.characters()
       |> Enum.each(fn {char_code, _, name} ->
         case metrics.glyphs[name] do
           nil ->
@@ -106,14 +106,14 @@ defmodule Pdf.Font do
 
   # Example:
 
-  iex> Pdf.Font.lookup("Helvetica-BoldOblique")
-  Pdf.Font.HelveticaBoldOblique
+  iex> PDF.Font.lookup("Helvetica-BoldOblique")
+  PDF.Font.HelveticaBoldOblique
   """
   def lookup(name, opts \\ [])
 
   font_metrics
   |> Enum.each(fn metrics ->
-    font_module = String.to_atom("Elixir.Pdf.Font.#{String.replace(metrics.name, "-", "")}")
+    font_module = String.to_atom("Elixir.PDF.Font.#{String.replace(metrics.name, "-", "")}")
 
     if metrics.weight == :bold and metrics.italic_angle == 0 do
       def lookup(unquote(metrics.family_name), bold: true), do: unquote(font_module)
@@ -176,8 +176,8 @@ defmodule Pdf.Font do
     iex> Font.width(font, "A")
     123
   """
-  def width(%Pdf.ExternalFont{} = font, char_code) do
-    Pdf.ExternalFont.width(font, char_code)
+  def width(%PDF.ExternalFont{} = font, char_code) do
+    PDF.ExternalFont.width(font, char_code)
   end
 
   def width(font, char_code) do
@@ -191,7 +191,7 @@ defmodule Pdf.Font do
 
   def text_width(font, string, opts) when is_list(opts) do
     normalized_string =
-      Pdf.Text.normalize_string(
+      PDF.Text.normalize_string(
         string,
         Keyword.get(opts, :encoding_replacement_character, :raise)
       )
@@ -230,8 +230,8 @@ defmodule Pdf.Font do
 
   def kern_text(_font, ""), do: [""]
 
-  def kern_text(%Pdf.ExternalFont{} = font, text) do
-    Pdf.ExternalFont.kern_text(font, text)
+  def kern_text(%PDF.ExternalFont{} = font, text) do
+    PDF.ExternalFont.kern_text(font, text)
   end
 
   def kern_text(font, text) do

@@ -1,10 +1,10 @@
-defmodule Pdf.ObjectCollection do
+defmodule PDF.ObjectCollection do
   @moduledoc false
 
   use GenServer
-  import Pdf.Util.GenServerMacros
+  import PDF.Util.GenServerMacros
 
-  alias Pdf.Object
+  alias PDF.Object
 
   defmodule State do
     @moduledoc false

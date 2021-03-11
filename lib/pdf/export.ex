@@ -1,28 +1,28 @@
-defprotocol Pdf.Export do
+defprotocol PDF.Export do
   @moduledoc false
 
   def to_iolist(object)
 end
 
-defimpl Pdf.Export, for: List do
+defimpl PDF.Export, for: List do
   def to_iolist([]), do: []
-  def to_iolist(list), do: Enum.map(list, &Pdf.Export.to_iolist/1)
+  def to_iolist(list), do: Enum.map(list, &PDF.Export.to_iolist/1)
 end
 
-defimpl Pdf.Export, for: BitString do
+defimpl PDF.Export, for: BitString do
   def to_iolist(string), do: string
 end
 
-defimpl Pdf.Export, for: Integer do
-  def to_iolist(number), do: Pdf.Export.to_iolist(Integer.to_string(number))
+defimpl PDF.Export, for: Integer do
+  def to_iolist(number), do: PDF.Export.to_iolist(Integer.to_string(number))
 end
 
-defimpl Pdf.Export, for: Float do
+defimpl PDF.Export, for: Float do
   def to_iolist(number),
-    do: Pdf.Export.to_iolist(:erlang.float_to_binary(number, [:compact, decimals: 4]))
+    do: PDF.Export.to_iolist(:erlang.float_to_binary(number, [:compact, decimals: 4]))
 end
 
-defimpl Pdf.Export, for: Date do
+defimpl PDF.Export, for: Date do
   def to_iolist(date) do
     [
       "(D:",
@@ -36,7 +36,7 @@ defimpl Pdf.Export, for: Date do
   defp pad_datepart(part), do: part |> to_string |> String.pad_leading(2, "0")
 end
 
-defimpl Pdf.Export, for: DateTime do
+defimpl PDF.Export, for: DateTime do
   def to_iolist(date) do
     [
       "(D:",
@@ -64,7 +64,7 @@ defimpl Pdf.Export, for: DateTime do
   end
 end
 
-defimpl Pdf.Export, for: Tuple do
+defimpl PDF.Export, for: Tuple do
   def to_iolist({:string, string}), do: ["(", string, ")"]
 
   def to_iolist({:name, name}), do: ["/", name]
@@ -75,7 +75,7 @@ defimpl Pdf.Export, for: Tuple do
   def to_iolist({:command, []}), do: []
 
   def to_iolist({:command, [head | tail]}),
-    do: [Pdf.Export.to_iolist(head), Enum.map(tail, &[" ", Pdf.Export.to_iolist(&1)])]
+    do: [PDF.Export.to_iolist(head), Enum.map(tail, &[" ", PDF.Export.to_iolist(&1)])]
 
   def to_iolist({:command, command}), do: command
 end

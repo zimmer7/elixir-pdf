@@ -1,4 +1,4 @@
-defmodule Pdf.Image do
+defmodule PDF.Image do
   @moduledoc false
 
   defstruct bits: nil,
@@ -9,7 +9,7 @@ defmodule Pdf.Image do
             data: nil,
             dictionary: nil
 
-  import Pdf.Size
+  import PDF.Size
 
   @stream_start "\nstream\n"
   @stream_end "endstream\n"
@@ -17,10 +17,10 @@ defmodule Pdf.Image do
   def new({:binary, image_data}, objects) do
     case identify_image(image_data) do
       :jpeg ->
-        Pdf.Images.JPEG.prepare_image(image_data)
+        PDF.Images.JPEG.prepare_image(image_data)
 
       :png ->
-        Pdf.Images.PNG.prepare_image(image_data, objects)
+        PDF.Images.PNG.prepare_image(image_data, objects)
 
       _else ->
         {:error, :image_format_not_recognised}
@@ -40,7 +40,7 @@ defmodule Pdf.Image do
   end
 
   def to_iolist(%__MODULE__{data: data, dictionary: dictionary}) do
-    Pdf.Export.to_iolist(
+    PDF.Export.to_iolist(
       Enum.filter(
         [
           dictionary,
@@ -53,11 +53,11 @@ defmodule Pdf.Image do
     )
   end
 
-  defimpl Pdf.Size do
-    def size_of(%Pdf.Image{} = image), do: Pdf.Image.size(image)
+  defimpl PDF.Size do
+    def size_of(%PDF.Image{} = image), do: PDF.Image.size(image)
   end
 
-  defimpl Pdf.Export do
-    def to_iolist(%Pdf.Image{} = image), do: Pdf.Image.to_iolist(image)
+  defimpl PDF.Export do
+    def to_iolist(%PDF.Image{} = image), do: PDF.Image.to_iolist(image)
   end
 end

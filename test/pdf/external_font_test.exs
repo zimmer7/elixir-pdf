@@ -1,10 +1,10 @@
-defmodule Pdf.ExternalFontTest do
+defmodule PDF.ExternalFontTest do
   use ExUnit.Case, asyn: true
 
-  alias Pdf.ExternalFont
-  alias Pdf.Font
-  alias Pdf.Size
-  alias Pdf.Export
+  alias PDF.ExternalFont
+  alias PDF.Font
+  alias PDF.Size
+  alias PDF.Export
 
   @font "Verdana"
 

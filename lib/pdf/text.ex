@@ -1,4 +1,4 @@
-defmodule Pdf.Text do
+defmodule PDF.Text do
   @moduledoc false
 
   def escape(parts) when is_list(parts) do
@@ -32,7 +32,7 @@ defmodule Pdf.Text do
     |> Regex.scan(string, capture: :all_but_first)
     |> Enum.flat_map(& &1)
     |> Enum.reject(&(&1 == ""))
-    |> Enum.map(&{&1, Pdf.Font.text_width(font, &1, font_size, opts), opts})
+    |> Enum.map(&{&1, PDF.Font.text_width(font, &1, font_size, opts), opts})
   end
 
   def chunk_attributed_text(attributed_text, opts) do
@@ -104,7 +104,7 @@ defmodule Pdf.Text do
   def normalize_string(string, replace_with \\ :raise) when is_binary(string) do
     string
     |> normalize_unicode_characters()
-    |> Pdf.Encoding.WinAnsi.encode(replace_with)
+    |> PDF.Encoding.WinAnsi.encode(replace_with)
   end
 
   # Only available from OTP 20.0

@@ -1,4 +1,4 @@
-defmodule Pdf.Util.GenServerMacros do
+defmodule PDF.Util.GenServerMacros do
   @moduledoc false
   @doc false
   defmacro defcall({name, _, args}, opts) do

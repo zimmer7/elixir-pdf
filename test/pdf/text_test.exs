@@ -1,10 +1,10 @@
-defmodule Pdf.TextTest do
+defmodule PDF.TextTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.Text
+  alias PDF.Text
 
   setup do
-    font = Pdf.Font.Helvetica
+    font = PDF.Font.Helvetica
     font_size = 10
     {:ok, font: font, font_size: font_size}
   end

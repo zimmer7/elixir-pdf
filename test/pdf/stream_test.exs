@@ -1,7 +1,7 @@
-defmodule Pdf.StreamTest do
+defmodule PDF.StreamTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.Stream
+  alias PDF.Stream
 
   test "push/2" do
     stream =
@@ -11,7 +11,7 @@ defmodule Pdf.StreamTest do
       |> Stream.push("(Hello World) Tj")
       |> Stream.push("ET")
 
-    iolist = Pdf.Export.to_iolist(stream)
+    iolist = PDF.Export.to_iolist(stream)
 
     assert iolist == [
              ["<<\n", [[["/", "Length"], " ", "34", "\n"]], ">>"],
@@ -38,7 +38,7 @@ defmodule Pdf.StreamTest do
       |> Stream.push("(Hello World) Tj")
       |> Stream.push("ET")
 
-    iolist = Pdf.Export.to_iolist(stream)
+    iolist = PDF.Export.to_iolist(stream)
 
     assert iolist == [
              [

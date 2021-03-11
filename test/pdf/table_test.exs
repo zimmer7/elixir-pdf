@@ -1,7 +1,7 @@
-defmodule Pdf.TableTest do
-  use Pdf.Case, async: true
+defmodule PDF.TableTest do
+  use PDF.Case, async: true
 
-  alias Pdf.{Page, ObjectCollection, Fonts}
+  alias PDF.{Page, ObjectCollection, Fonts}
 
   setup do
     {:ok, collection} = ObjectCollection.start_link()

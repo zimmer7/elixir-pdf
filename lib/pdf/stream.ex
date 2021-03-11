@@ -1,4 +1,4 @@
-defmodule Pdf.Stream do
+defmodule PDF.Stream do
   @moduledoc false
   @type t :: %__MODULE__{
           compress: non_neg_integer(),
@@ -8,9 +8,9 @@ defmodule Pdf.Stream do
         }
   defstruct compress: 6, size: 0, dictionary: %{}, content: []
 
-  import Pdf.Size
-  import Pdf.Utils
-  alias Pdf.Dictionary
+  import PDF.Size
+  import PDF.Utils
+  alias PDF.Dictionary
 
   @stream_start "\nstream\n"
   @stream_end "endstream"
@@ -47,7 +47,7 @@ defmodule Pdf.Stream do
   def to_iolist(%{compress: false} = stream) do
     dictionary = Dictionary.new(Map.merge(stream.dictionary, %{"Length" => stream.size}))
 
-    Pdf.Export.to_iolist([
+    PDF.Export.to_iolist([
       dictionary,
       @stream_start,
       Enum.reverse(stream.content),
@@ -59,7 +59,7 @@ defmodule Pdf.Stream do
     compressed =
       stream.content
       |> Enum.reverse()
-      |> Pdf.Export.to_iolist()
+      |> PDF.Export.to_iolist()
       |> compress(level)
 
     dictionary =
@@ -70,7 +70,7 @@ defmodule Pdf.Stream do
         })
       )
 
-    Pdf.Export.to_iolist([
+    PDF.Export.to_iolist([
       dictionary,
       @stream_start,
       compressed,
@@ -86,7 +86,7 @@ defmodule Pdf.Stream do
     IO.iodata_to_binary(compressed)
   end
 
-  defimpl Pdf.Export do
-    def to_iolist(stream), do: Pdf.Stream.to_iolist(stream)
+  defimpl PDF.Export do
+    def to_iolist(stream), do: PDF.Stream.to_iolist(stream)
   end
 end

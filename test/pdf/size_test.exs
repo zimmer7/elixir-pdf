@@ -1,7 +1,7 @@
-defmodule Pdf.SizeTest do
+defmodule PDF.SizeTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.Size
+  alias PDF.Size
 
   describe "size_of/1 for BitString" do
     test "it returns the length of the string" do

@@ -1,4 +1,4 @@
-defmodule Pdf.Font.Metrics do
+defmodule PDF.Font.Metrics do
   @moduledoc false
 
   defmodule Glyph do
@@ -27,7 +27,7 @@ defmodule Pdf.Font.Metrics do
             glyphs: %{},
             kern_pairs: []
 
-  def widths(metrics, encoding \\ Pdf.Encoding.WinAnsi) do
+  def widths(metrics, encoding \\ PDF.Encoding.WinAnsi) do
     Enum.map(encoding.characters(), fn {_, _, name} ->
       case metrics.glyphs[name] do
         nil -> 0
@@ -81,7 +81,7 @@ defmodule Pdf.Font.Metrics do
   def process_line(<<"C ", _rest::binary>> = line, %{glyphs: glyphs} = metrics) do
     glyph = parse_glyph(line)
 
-    if Pdf.Encoding.WinAnsi.from_name(glyph.name) do
+    if PDF.Encoding.WinAnsi.from_name(glyph.name) do
       %{metrics | glyphs: Map.put(glyphs, glyph.name, glyph)}
     else
       metrics
@@ -91,8 +91,8 @@ defmodule Pdf.Font.Metrics do
   def process_line(<<"KPX ", data::binary>>, %{kern_pairs: kern_pairs} = metrics) do
     case String.split(data) do
       [first, second, amount] ->
-        first_char_code = Pdf.Encoding.WinAnsi.from_name(first)
-        second_char_code = Pdf.Encoding.WinAnsi.from_name(second)
+        first_char_code = PDF.Encoding.WinAnsi.from_name(first)
+        second_char_code = PDF.Encoding.WinAnsi.from_name(second)
 
         if first_char_code && second_char_code do
           {amount, _} = Integer.parse(amount)
@@ -124,7 +124,7 @@ defmodule Pdf.Font.Metrics do
     do: parse_glyph(tail, glyph)
 
   defp parse_glyph([<<"N ", name::binary>> | tail], glyph) do
-    char_code = Pdf.Encoding.WinAnsi.from_name(name)
+    char_code = PDF.Encoding.WinAnsi.from_name(name)
     parse_glyph(tail, %{glyph | name: name, char_code: char_code})
   end
 

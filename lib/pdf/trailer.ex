@@ -1,5 +1,5 @@
-defmodule Pdf.Trailer do
-  alias Pdf.Dictionary
+defmodule PDF.Trailer do
+  alias PDF.Dictionary
 
   @moduledoc false
 
@@ -8,7 +8,7 @@ defmodule Pdf.Trailer do
   def new(objects, offset, root, info),
     do: %__MODULE__{objects: objects, offset: offset, root: root, info: info}
 
-  defimpl Pdf.Export do
+  defimpl PDF.Export do
     def to_iolist(trailer) do
       dictionary =
         Dictionary.new()
@@ -16,7 +16,7 @@ defmodule Pdf.Trailer do
         |> Dictionary.put("Root", trailer.root)
         |> Dictionary.put("Info", trailer.info)
 
-      Pdf.Export.to_iolist(["trailer\n", dictionary, "\nstartxref\n", trailer.offset, "\n%%EOF"])
+      PDF.Export.to_iolist(["trailer\n", dictionary, "\nstartxref\n", trailer.offset, "\n%%EOF"])
     end
   end
 end

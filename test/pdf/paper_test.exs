@@ -1,7 +1,7 @@
-defmodule Pdf.PaperTest do
+defmodule PDF.PaperTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.Paper
+  alias PDF.Paper
 
   test "size/1 by name" do
     assert Paper.size(:a4) == [0, 0, 595, 842]

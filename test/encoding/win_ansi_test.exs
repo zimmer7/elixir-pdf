@@ -1,7 +1,7 @@
-defmodule Pdf.Encoding.WinAnsiTest do
+defmodule PDF.Encoding.WinAnsiTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.Encoding.WinAnsi
+  alias PDF.Encoding.WinAnsi
 
   test "from_name/1" do
     assert WinAnsi.from_name("space") == 32

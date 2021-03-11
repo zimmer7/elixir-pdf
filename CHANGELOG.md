@@ -5,7 +5,7 @@
 
 ## 0.4.0
 - Add `:encoding_replacement_character` option to supply a replacement character when encoding fails
-- Add `:allow_row_overflow` option to `Pdf.table/4` to allow row contents to be split across pages
+- Add `:allow_row_overflow` option to `PDF.table/4` to allow row contents to be split across pages
 
 ## 0.3.7
 - Bug fix: Fix memory leak by stopping internal processes
@@ -17,5 +17,5 @@
 - Bug fix: Fix global options for text_at/4 when using a string #11
 
 ## 0.3.5
-- Deprecate: `Pdf.delete/1` in favour of `Pdf.cleanup/1`
-- Deprecate: `Pdf.open/2` in favour of `Pdf.build/2`
+- Deprecate: `PDF.delete/1` in favour of `PDF.cleanup/1`
+- Deprecate: `PDF.open/2` in favour of `PDF.build/2`

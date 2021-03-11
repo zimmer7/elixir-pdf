@@ -1,5 +1,5 @@
-defmodule Pdf.Examples.TableTest do
-  use Pdf.Case, async: true
+defmodule PDF.Examples.TableTest do
+  use PDF.Case, async: true
 
   @open false
   test "" do
@@ -15,7 +15,7 @@ defmodule Pdf.Examples.TableTest do
 
     file_path = output("table.pdf")
 
-    pdf = Pdf.new(size: :a4, compress: false)
+    pdf = PDF.new(size: :a4, compress: false)
 
     table_opts = [
       padding: 2,
@@ -55,19 +55,19 @@ defmodule Pdf.Examples.TableTest do
 
     pdf =
       pdf
-      |> Pdf.set_font("Helvetica", 12)
-      |> Pdf.set_fill_color(:black)
-      |> Pdf.set_line_cap(:square)
-      |> Pdf.set_line_join(:miter)
+      |> PDF.set_font("Helvetica", 12)
+      |> PDF.set_fill_color(:black)
+      |> PDF.set_line_cap(:square)
+      |> PDF.set_line_join(:miter)
 
-    {up_pdf, remaining} = Pdf.table(pdf, {100, 800}, {400, 80}, data, table_opts)
+    {up_pdf, remaining} = PDF.table(pdf, {100, 800}, {400, 80}, data, table_opts)
 
-    cursor = Pdf.cursor(up_pdf)
+    cursor = PDF.cursor(up_pdf)
 
     {com_pdf, :complete} =
-      Pdf.table(up_pdf, {100, cursor - 20}, {400, 200}, remaining, table_opts)
+      PDF.table(up_pdf, {100, cursor - 20}, {400, 200}, remaining, table_opts)
 
-    Pdf.write_to(com_pdf, file_path)
+    PDF.write_to(com_pdf, file_path)
 
     if @open, do: System.cmd("open", ["-g", file_path])
   end

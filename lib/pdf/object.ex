@@ -1,9 +1,9 @@
-defmodule Pdf.Object do
+defmodule PDF.Object do
   @moduledoc false
 
   defstruct number: nil, generation: "0", size: 0, value: nil
 
-  import Pdf.Size
+  import PDF.Size
 
   @obj_start " obj\n"
   @obj_end "\nendobj\n"
@@ -26,12 +26,12 @@ defmodule Pdf.Object do
   def size(object), do: object.size + value_size(object.value)
 
   def to_iolist(object) do
-    Pdf.Export.to_iolist([
+    PDF.Export.to_iolist([
       object.number,
       " ",
       object.generation,
       @obj_start,
-      Pdf.Object.value_to_iolist(object.value),
+      PDF.Object.value_to_iolist(object.value),
       @obj_end
     ])
   end
@@ -40,16 +40,16 @@ defmodule Pdf.Object do
     do: "#{number} #{generation} R"
 
   def value_to_iolist(string) when is_binary(string), do: ["(", string, ")"]
-  def value_to_iolist(value), do: Pdf.Export.to_iolist(value)
+  def value_to_iolist(value), do: PDF.Export.to_iolist(value)
 
   defp value_size(string) when is_binary(string), do: 2 + size_of(string)
   defp value_size(value), do: size_of(value)
 
-  defimpl Pdf.Size do
-    def size_of(%Pdf.Object{} = object), do: Pdf.Object.size(object)
+  defimpl PDF.Size do
+    def size_of(%PDF.Object{} = object), do: PDF.Object.size(object)
   end
 
-  defimpl Pdf.Export do
-    def to_iolist(object), do: Pdf.Object.to_iolist(object)
+  defimpl PDF.Export do
+    def to_iolist(object), do: PDF.Object.to_iolist(object)
   end
 end

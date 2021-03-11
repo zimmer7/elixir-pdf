@@ -1,5 +1,5 @@
-defmodule Pdf do
-  alias Pdf.{
+defmodule PDF do
+  alias PDF.{
     Document,
     Page
   }
@@ -10,12 +10,12 @@ defmodule Pdf do
   ## Usage
 
   ```elixir
-  Pdf.build([size: :a4, compress: true], fn pdf ->
+  PDF.build([size: :a4, compress: true], fn pdf ->
     pdf
-    |> Pdf.set_info(title: "Demo PDF")
-    |> Pdf.set_font("Helvetica", 10)
-    |> Pdf.text_at({200,200}, "Welcome to Pdf")
-    |> Pdf.write_to("test.pdf")
+    |> PDF.set_info(title: "Demo PDF")
+    |> PDF.set_font("Helvetica", 10)
+    |> PDF.text_at({200,200}, "Welcome to PDF")
+    |> PDF.write_to("test.pdf")
   end)
   ```
   ## Page sizes
@@ -33,17 +33,17 @@ defmodule Pdf do
    - `:legal`
    - `:letter`
    - `:tabloid`
-   - a custom size `[width, height]` in Pdf points.
+   - a custom size `[width, height]` in PDF points.
 
   or you can also specify a tuple `{size, :landscape}`.
   """
 
   @typedoc """
   Most functions take a coordinates tuple, `{x, y}`.
-  In Pdf these start from the bottom-left of the page.
+  In PDF these start from the bottom-left of the page.
   """
   @type coords :: {x, y}
-  @typedoc "Width and height expressed in Pdf points"
+  @typedoc "Width and height expressed in PDF points"
   @type dimension :: {width, height}
   @typedoc "The x-coordinate"
   @type x :: number
@@ -54,7 +54,7 @@ defmodule Pdf do
   @typedoc "The height in points"
   @type height :: number
   @typedoc """
-  Use one of the colors in the `Pdf.Color` module.
+  Use one of the colors in the `PDF.Color` module.
   """
   @type color_name :: atom
   @typedoc """
@@ -99,12 +99,12 @@ defmodule Pdf do
   @type join_style :: :miter | :round | :bevel | integer()
 
   @doc """
-  Create a new Pdf process
+  Create a new PDF process
 
   The following options can be given:
 
   :size      |  Page size, defaults to `:a4`
-  :compress  |  Compress the Pdf, default: `true`
+  :compress  |  Compress the PDF, default: `true`
 
   There is no standard font selected when creating a new PDF, so set one with `set_font/3` before adding text.
 
@@ -113,18 +113,18 @@ defmodule Pdf do
   def new(opts \\ []), do: Document.new(opts)
 
   @doc """
-  The unit of measurement in a Pdf are points, where *1 point = 1/72 inch*.
+  The unit of measurement in a PDF are points, where *1 point = 1/72 inch*.
   This means that a standard A4 page, 8.27 inch, translates to 595 points.
   """
   def points(x), do: x
-  @doc "Convert the given value from picas to Pdf points"
+  @doc "Convert the given value from picas to PDF points"
   def picas(x), do: x * 6
-  @doc "Convert the given value from inches to Pdf points"
+  @doc "Convert the given value from inches to PDF points"
   def inches(x), do: round(x * 72)
-  @doc "Convert the given value from cm to Pdf points"
+  @doc "Convert the given value from cm to PDF points"
   def cm(x), do: round(x * 72 / 2.54)
 
-  @doc "Convert the given value from pixels to Pdf points"
+  @doc "Convert the given value from pixels to PDF points"
   def pixels_to_points(pixels, dpi \\ 300), do: round(pixels / dpi * 72)
 
   @doc "Write the PDF to the given path"
@@ -134,7 +134,7 @@ defmodule Pdf do
   end
 
   @doc """
-  Export the Pdf to a binary representation.
+  Export the PDF to a binary representation.
 
   This is can be used in eg Phoenix to send a PDF to the browser.
 
@@ -142,7 +142,7 @@ defmodule Pdf do
     report =
       pdf
       |> ...
-      |> Pdf.export()
+      |> PDF.export()
 
    conn
     |> put_resp_content_type("application/pdf")
@@ -159,7 +159,7 @@ defmodule Pdf do
   end
 
   @doc """
-  Add a new page to the Pdf with the given page size.
+  Add a new page to the PDF with the given page size.
   """
   def add_page(%Document{} = document, size) do
     Document.add_page(%Document{} = document, size: size)
@@ -173,7 +173,7 @@ defmodule Pdf do
   @doc """
   Set the color to use when filling.
 
-  This takes either a `Pdf.Color.color/1` atom, an RGB tuple or a CMYK tuple.
+  This takes either a `PDF.Color.color/1` atom, an RGB tuple or a CMYK tuple.
   """
   # @spec set_fill_color(pid, color_name | rgb | cmyk) :: pid
   def set_fill_color(%Document{} = document, color) do
@@ -183,7 +183,7 @@ defmodule Pdf do
   @doc """
   Set the color to use when drawing lines.
 
-  This takes either a `Pdf.Color.color/1` atom, an RGB tuple or a CMYK tuple.
+  This takes either a `PDF.Color.color/1` atom, an RGB tuple or a CMYK tuple.
   """
   # @spec set_stroke_color(pid, color_name | rgb | cmyk) :: pid
   def set_stroke_color(%Document{} = document, color) do
@@ -242,8 +242,8 @@ defmodule Pdf do
   Draw a line from the last position to the given coordinates.
   ```elixir
     pdf
-    |> Pdf.move_to({100, 100})
-    |> Pdf.line_append({200, 200})
+    |> PDF.move_to({100, 100})
+    |> PDF.line_append({200, 200})
   ```
   """
   # @spec line_append(pid, coords) :: pid
@@ -311,8 +311,8 @@ defmodule Pdf do
   fonts_dir = Application.app_dir(:my_app) |> Path.join("priv", "fonts")
 
   pdf
-  |> Pdf.add_font(Path.join(fonts_dir, "DejavuSans.afm")
-  |> Pdf.add_font(Path.join(fonts_dir, "DejavuSans-Bold.afm")
+  |> PDF.add_font(Path.join(fonts_dir, "DejavuSans.afm")
+  |> PDF.add_font(Path.join(fonts_dir, "DejavuSans-Bold.afm")
   ```
 
   The font can then be set with `set_font/3`.

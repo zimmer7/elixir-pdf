@@ -1,7 +1,7 @@
-defmodule Pdf.Images.PNGTest do
-  use Pdf.Case, async: true
+defmodule PDF.Images.PNGTest do
+  use PDF.Case, async: true
 
-  alias Pdf.Images.PNG
+  alias PDF.Images.PNG
 
   test "decode/1" do
     assert %{bit_depth: 8, height: 75, width: 100, color_type: 0} =

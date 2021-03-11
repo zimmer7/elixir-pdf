@@ -1,4 +1,4 @@
-defmodule Pdf.Utils do
+defmodule PDF.Utils do
   @moduledoc false
   @doc false
   def c({:command, _} = command), do: command
@@ -14,6 +14,6 @@ defmodule Pdf.Utils do
   def s(string), do: {:string, string}
 
   @doc false
-  def a(%Pdf.Array{} = array), do: array
-  def a(list), do: Pdf.Array.new(list)
+  def a(%PDF.Array{} = array), do: array
+  def a(list), do: PDF.Array.new(list)
 end

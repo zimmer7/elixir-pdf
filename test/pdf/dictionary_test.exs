@@ -1,7 +1,7 @@
-defmodule Pdf.DictionaryTest do
+defmodule PDF.DictionaryTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.Dictionary
+  alias PDF.Dictionary
 
   test "put/3 with a string value" do
     dictionary = Dictionary.put(%Dictionary{}, "Name", "Value")
@@ -42,7 +42,7 @@ defmodule Pdf.DictionaryTest do
       |> Dictionary.put("Name", "Value")
       |> Dictionary.put("Key", "Value2")
 
-    iolist = Pdf.Export.to_iolist(dictionary)
+    iolist = PDF.Export.to_iolist(dictionary)
 
     assert iolist == [
              "<<\n",
@@ -63,7 +63,7 @@ defmodule Pdf.DictionaryTest do
       |> Dictionary.put("Name", "Value")
       |> Dictionary.put("Key", Dictionary.put(Dictionary.new(), "Key", "Value2"))
 
-    iolist = Pdf.Export.to_iolist(dictionary)
+    iolist = PDF.Export.to_iolist(dictionary)
 
     assert iolist == [
              "<<\n",

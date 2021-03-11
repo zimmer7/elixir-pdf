@@ -1,7 +1,7 @@
-defmodule Pdf.DocumentTest do
+defmodule PDF.DocumentTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.{Document, ObjectCollection, Dictionary}
+  alias PDF.{Document, ObjectCollection, Dictionary}
 
   describe "new/1" do
     test "it creates a default info dictionary" do

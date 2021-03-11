@@ -1,7 +1,7 @@
-defmodule Pdf.ExportTest do
+defmodule PDF.ExportTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.Export
+  alias PDF.Export
 
   describe "to_iolist/1 for BitString" do
     test "it returns the string untouched" do

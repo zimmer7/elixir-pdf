@@ -1,7 +1,7 @@
-defmodule Pdf.RefTableTest do
+defmodule PDF.RefTableTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.{RefTable, Object}
+  alias PDF.{RefTable, Object}
 
   test "" do
     iolist =

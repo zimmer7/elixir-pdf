@@ -1,9 +1,9 @@
-defmodule Pdf.Array do
+defmodule PDF.Array do
   @moduledoc false
 
   defstruct values: []
 
-  import Pdf.Size
+  import PDF.Size
 
   @array_start "[ "
   @array_start_length byte_size(@array_start)
@@ -15,8 +15,8 @@ defmodule Pdf.Array do
 
   def size(array), do: calculate_size(array.values)
 
-  def to_iolist(%Pdf.Array{values: values}) do
-    Pdf.Export.to_iolist([
+  def to_iolist(%PDF.Array{values: values}) do
+    PDF.Export.to_iolist([
       @array_start,
       Enum.map(values, fn value -> [value, " "] end),
       @array_end
@@ -29,11 +29,11 @@ defmodule Pdf.Array do
     @initial_length + Enum.reduce(list, length(list), fn value, acc -> acc + size_of(value) end)
   end
 
-  defimpl Pdf.Size do
-    def size_of(%Pdf.Array{} = array), do: Pdf.Array.size(array)
+  defimpl PDF.Size do
+    def size_of(%PDF.Array{} = array), do: PDF.Array.size(array)
   end
 
-  defimpl Pdf.Export do
-    def to_iolist(array), do: Pdf.Array.to_iolist(array)
+  defimpl PDF.Export do
+    def to_iolist(array), do: PDF.Array.to_iolist(array)
   end
 end

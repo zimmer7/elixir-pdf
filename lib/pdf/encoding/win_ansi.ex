@@ -1,4 +1,4 @@
-defmodule Pdf.Encoding.WinAnsi do
+defmodule PDF.Encoding.WinAnsi do
   @moduledoc false
 
   @char_info [

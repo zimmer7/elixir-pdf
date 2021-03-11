@@ -1,6 +1,6 @@
 # Tables
 
-Use `Pdf.table/5` to add a table to your PDF.
+Use `PDF.table/5` to add a table to your PDF.
 This guide explains the different options you can use with the following example, you can see the generated [pdf](assets/table.pdf).
 
 ```elixir
@@ -14,7 +14,7 @@ data = [
   [nil, nil, "Col 5,3", "Col 5,4"]
 ]
 
-{:ok, pdf} = Pdf.new(size: :a4)
+{:ok, pdf} = PDF.new(size: :a4)
 
 table_opts = [
   padding: 2,
@@ -51,35 +51,35 @@ border: 0.5
 ]
 
 pdf
-  |> Pdf.set_font("Helvetica", 12)
-  |> Pdf.set_fill_color(:black)
-  |> Pdf.set_line_cap(:square)
-  |> Pdf.set_line_join(:miter)
+  |> PDF.set_font("Helvetica", 12)
+  |> PDF.set_fill_color(:black)
+  |> PDF.set_line_cap(:square)
+  |> PDF.set_line_join(:miter)
 
 {pdf, remaining} =
   pdf
-  |> Pdf.table({100, 800}, {400, 80}, data, table_opts)
+  |> PDF.table({100, 800}, {400, 80}, data, table_opts)
 
-cursor = Pdf.cursor(pdf)
+cursor = PDF.cursor(pdf)
 
 {pdf, :complete} =
   pdf
-  |> Pdf.table({100, cursor - 20}, {400, 200}, remaining, table_opts)
+  |> PDF.table({100, cursor - 20}, {400, 200}, remaining, table_opts)
 
 pdf
-  |> Pdf.delete()
+  |> PDF.delete()
 ```
 
-You can use either `Pdf.table/5` or `Pdf.table!/5` to add a table to your Pdf.
+You can use either `PDF.table/5` or `PDF.table!/5` to add a table to your PDF.
 
-`Pdf.table/5` returns a tuple :
+`PDF.table/5` returns a tuple :
 
 - `{pid, :complete}` All data was processed.
 - `{pid, remaining}` Not all data fit into the given dimensions.
 
   This allows you to draw the remaining data on eg another page.
 
-`Pdf.table!/5` will raise a `RuntimeError` if the data does not fit.
+`PDF.table!/5` will raise a `RuntimeError` if the data does not fit.
 
 ## Options
 
@@ -88,7 +88,7 @@ These options can be applied to the table, rows and columns.
 
 Options |
 :----- | :------
-`:background` | One of the predefined color atomsi (see `Pdf.Color.color/1`), an RGB tuple or a CMYK tuple.
+`:background` | One of the predefined color atomsi (see `PDF.Color.color/1`), an RGB tuple or a CMYK tuple.
 `:border` | The thickness of the border, see `:padding` below.
 `:color` | The font color, accepts the same options as `:background`.
 `:font_size` | Font size

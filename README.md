@@ -1,4 +1,4 @@
-# Pdf
+# PDF
 [![Build Status](https://travis-ci.org/andrewtimberlake/elixir-pdf.svg?branch=master)](https://travis-ci.org/andrewtimberlake/elixir-pdf)
 
 The missing PDF library for Elixir.
@@ -6,12 +6,12 @@ The missing PDF library for Elixir.
 ## Usage
 
 ```elixir
-Pdf.build([size: :a4, compress: true], fn pdf ->
+PDF.build([size: :a4, compress: true], fn pdf ->
   pdf
-  |> Pdf.set_info(title: "Demo PDF")
-  |> Pdf.set_font("Helvetica", 10)
-  |> Pdf.text_at({200,200}, "Welcome to Pdf")
-  |> Pdf.write_to("test.pdf")
+  |> PDF.set_info(title: "Demo PDF")
+  |> PDF.set_font("Helvetica", 10)
+  |> PDF.text_at({200,200}, "Welcome to PDF")
+  |> PDF.write_to("test.pdf")
 end)
 ```
 

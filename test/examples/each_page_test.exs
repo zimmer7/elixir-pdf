@@ -1,5 +1,5 @@
-defmodule Pdf.Examples.EachPageTest do
-  use Pdf.Case, async: true
+defmodule PDF.Examples.EachPageTest do
+  use PDF.Case, async: true
 
   @open false
   test "generate document" do
@@ -7,23 +7,23 @@ defmodule Pdf.Examples.EachPageTest do
     size = :a4
 
     pdf =
-      Pdf.new(size: size, compress: false)
-      |> Pdf.add_page(size)
-      |> Pdf.add_page(size)
-      |> Pdf.add_page(size)
+      PDF.new(size: size, compress: false)
+      |> PDF.add_page(size)
+      |> PDF.add_page(size)
+      |> PDF.add_page(size)
 
     page_count = length(pdf.pages)
 
     pdf
-    |> Pdf.each_page(fn {page, i} ->
+    |> PDF.each_page(fn {page, i} ->
       page
-      |> Pdf.Page.set_font("Helvetica", 10)
-      |> Pdf.Page.text_at(
-        {Pdf.cm(1), Pdf.cm(1)},
+      |> PDF.Page.set_font("Helvetica", 10)
+      |> PDF.Page.text_at(
+        {PDF.cm(1), PDF.cm(1)},
         "#{i + 1}/#{page_count}"
       )
     end)
-    |> Pdf.write_to(file_path)
+    |> PDF.write_to(file_path)
 
     if @open, do: System.cmd("open", ["-g", file_path])
   end

@@ -1,4 +1,4 @@
-defmodule Pdf.ExternalFont do
+defmodule PDF.ExternalFont do
   @moduledoc false
   defstruct name: nil,
             font_file: nil,
@@ -21,9 +21,9 @@ defmodule Pdf.ExternalFont do
             glyphs: %{},
             kern_pairs: []
 
-  import Pdf.Utils
-  alias Pdf.Font.Metrics
-  alias Pdf.{Array, Dictionary}
+  import PDF.Utils
+  alias PDF.Font.Metrics
+  alias PDF.{Array, Dictionary}
 
   @stream_start "\nstream\n"
   @stream_end "\nendstream"
@@ -113,7 +113,7 @@ defmodule Pdf.ExternalFont do
   end
 
   defp map_widths(font) do
-    Pdf.Encoding.WinAnsi.characters()
+    PDF.Encoding.WinAnsi.characters()
     |> Enum.map(fn {_, char, name} ->
       width =
         case font.glyphs[name] do
@@ -163,7 +163,7 @@ defmodule Pdf.ExternalFont do
   def kern_text(_font, <<_::integer>> = char), do: [char]
 
   def to_iolist(%__MODULE__{} = font) do
-    Pdf.Export.to_iolist([
+    PDF.Export.to_iolist([
       font.dictionary,
       @stream_start,
       font.font_file,
@@ -171,11 +171,11 @@ defmodule Pdf.ExternalFont do
     ])
   end
 
-  defimpl Pdf.Size do
-    def size_of(%Pdf.ExternalFont{} = font), do: Pdf.ExternalFont.size(font)
+  defimpl PDF.Size do
+    def size_of(%PDF.ExternalFont{} = font), do: PDF.ExternalFont.size(font)
   end
 
-  defimpl Pdf.Export do
-    def to_iolist(%Pdf.ExternalFont{} = font), do: Pdf.ExternalFont.to_iolist(font)
+  defimpl PDF.Export do
+    def to_iolist(%PDF.ExternalFont{} = font), do: PDF.ExternalFont.to_iolist(font)
   end
 end

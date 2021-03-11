@@ -1,7 +1,7 @@
-defmodule Pdf.Dictionary do
+defmodule PDF.Dictionary do
   @moduledoc false
-  import Pdf.Size
-  import Pdf.Utils
+  import PDF.Size
+  import PDF.Utils
 
   @dict_start "<<\n"
   @dict_start_length byte_size(@dict_start)
@@ -75,14 +75,14 @@ defmodule Pdf.Dictionary do
   defp entries_to_iolist([entry | tail]), do: [entry_to_iolist(entry) | entries_to_iolist(tail)]
 
   defp entry_to_iolist({key, value}),
-    do: Pdf.Export.to_iolist([key, @value_separator, value, @entry_separator])
+    do: PDF.Export.to_iolist([key, @value_separator, value, @entry_separator])
 
-  defimpl Pdf.Size do
-    def size_of(%Pdf.Dictionary{} = dictionary), do: Pdf.Dictionary.size(dictionary)
+  defimpl PDF.Size do
+    def size_of(%PDF.Dictionary{} = dictionary), do: PDF.Dictionary.size(dictionary)
   end
 
-  defimpl Pdf.Export do
-    def to_iolist(dictionary), do: Pdf.Dictionary.to_iolist(dictionary)
+  defimpl PDF.Export do
+    def to_iolist(dictionary), do: PDF.Dictionary.to_iolist(dictionary)
   end
 
   def to_map(%__MODULE__{entries: entries}) do

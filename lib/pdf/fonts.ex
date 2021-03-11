@@ -1,10 +1,10 @@
-defmodule Pdf.Fonts do
+defmodule PDF.Fonts do
   @moduledoc false
   use GenServer
-  import Pdf.Util.GenServerMacros
-  import Pdf.Utils
+  import PDF.Util.GenServerMacros
+  import PDF.Utils
 
-  alias Pdf.{Font, ExternalFont, ObjectCollection}
+  alias PDF.{Font, ExternalFont, ObjectCollection}
 
   defmodule State do
     @moduledoc false

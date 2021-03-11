@@ -1,13 +1,13 @@
-defmodule Pdf.TrailerTest do
+defmodule PDF.TrailerTest do
   use ExUnit.Case, async: true
 
-  alias Pdf.Trailer
+  alias PDF.Trailer
 
   test "" do
     root = {:object, 1, 0}
     info = {:object, 2, 0}
     objects = [root, info, {:object, 3, 0}]
-    iolist = Pdf.Export.to_iolist(Trailer.new(objects, 42, root, info))
+    iolist = PDF.Export.to_iolist(Trailer.new(objects, 42, root, info))
 
     assert iolist == [
              "trailer\n",

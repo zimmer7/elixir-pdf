@@ -1,4 +1,4 @@
-defmodule Pdf.Document do
+defmodule PDF.Document do
   @moduledoc false
   @type t :: %__MODULE__{
           objects: any(),
@@ -7,7 +7,7 @@ defmodule Pdf.Document do
           current: pos_integer(),
           current_font: any(),
           current_font_size: pos_integer(),
-          pages: [Pdf.Page.t()],
+          pages: [PDF.Page.t()],
           opts: Keyword.t(),
           images: map()
         }
@@ -21,9 +21,9 @@ defmodule Pdf.Document do
             opts: [],
             images: %{}
 
-  import Pdf.Utils
+  import PDF.Utils
 
-  alias Pdf.{
+  alias PDF.{
     Dictionary,
     Fonts,
     RefTable,
@@ -275,7 +275,7 @@ defmodule Pdf.Document do
 
     {ref_table, offset} = RefTable.to_iolist(objects, @header_size)
 
-    Pdf.Export.to_iolist([
+    PDF.Export.to_iolist([
       @header,
       objects,
       ref_table,
