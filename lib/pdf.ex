@@ -333,6 +333,12 @@ defmodule PDF do
   end
 
   @doc """
+  Get the current leading, e.g. to override it for one section and restore
+  it afterwards.
+  """
+  def get_text_leading(%Document{} = document), do: Document.get_text_leading(document)
+
+  @doc """
   Writes the text at the given coordinates.
   The coordinates are the bottom left of the text.
 

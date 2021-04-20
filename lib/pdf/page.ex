@@ -149,9 +149,8 @@ defmodule PDF.Page do
     %{page | current_font_size: size}
   end
 
-  def set_text_leading(page, leading) do
-    %{page | leading: leading}
-  end
+  def set_text_leading(page, leading), do: %{page | leading: leading}
+  def get_text_leading(page), do: page.leading
 
   defp begin_text(page) do
     %{current_font: font, current_font_size: size, leading: leading, fill_color: fill_color} =

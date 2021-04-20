@@ -232,6 +232,10 @@ defmodule PDF.Document do
     %__MODULE__{document | pages: updated_pages}
   end
 
+  def get_text_leading(%__MODULE__{current: p, pages: pages}) do
+    Enum.at(pages, p) |> Page.get_text_leading()
+  end
+
   def to_iolist(document) do
     proc_set = [n("PDF"), n("Text")]
 
