@@ -95,7 +95,7 @@ defmodule PDF.Fonts do
   end
 
   defp lookup_font(state, font, opts) do
-    lookup_font(state, font.family_name, opts)
+    lookup_font(state, font.family_name(), opts)
   end
 
   defp lookup_font(%{fonts: fonts} = state, name) when is_binary(name) do
@@ -107,7 +107,7 @@ defmodule PDF.Fonts do
   end
 
   defp lookup_font(%{fonts: fonts} = state, font_module) do
-    case fonts[font_module.name] do
+    case fonts[font_module.name()] do
       nil -> load_font(state, font_module)
       font -> {state, font}
     end
@@ -123,7 +123,7 @@ defmodule PDF.Fonts do
       object: font_object
     }
 
-    fonts = Map.put(fonts, font_module.name, reference)
+    fonts = Map.put(fonts, font_module.name(), reference)
     {%{state | last_id: id, fonts: fonts}, reference}
   end
 end
